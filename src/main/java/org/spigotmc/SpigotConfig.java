@@ -19,6 +19,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import red.mohist.Metrics;
 
 public class SpigotConfig
 {
@@ -61,18 +62,7 @@ public class SpigotConfig
         {
             net.minecraft.server.MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
         }
-
-        if ( metrics == null )
-        {
-            try
-            {
-                metrics = new Metrics();
-                metrics.start();
-            } catch ( IOException ex )
-            {
-                Bukkit.getServer().getLogger().log( Level.SEVERE, "Could not start metrics service", ex );
-            }
-        }
+        new Metrics();
     }
 
     static void readConfig(Class<?> clazz, Object instance)
