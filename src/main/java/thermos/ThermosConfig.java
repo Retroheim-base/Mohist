@@ -11,8 +11,6 @@ import net.minecraftforge.cauldron.configuration.StringSetting;
 public class ThermosConfig extends ConfigBase {
     public BoolSetting commandEnable = new BoolSetting(this, "command.enable", true, "Enable Thermos command");
     public BoolSetting opConsoleOnly = new BoolSetting(this, "op.consoleonly", false, "Set the OP command to only be allowed to run in console");
-    public BoolSetting updatecheckerEnable = new BoolSetting(this, "updatechecker.enable", true, "Enable Thermos update checker");
-    public BoolSetting updatecheckerQuiet = new BoolSetting(this, "updatechecker.quiet", false, "Print less info during update");
 
     public BoolSetting loggingMaterialInjection = new BoolSetting(this, "logging.materialInjection", false, "Log material injection event");
     public BoolSetting loggingClientModList = new BoolSetting(this, "logging.clientModList", true, "Print client's mod list during attempt to join");
@@ -22,8 +20,6 @@ public class ThermosConfig extends ConfigBase {
     public ThermosConfig() {
         super("thermos.yml", "thermos");
         register(commandEnable);
-        register(updatecheckerEnable);
-        register(updatecheckerQuiet);
         register(loggingMaterialInjection);
         register(loggingClientModList);
         register(commonAllowNetherPortal);

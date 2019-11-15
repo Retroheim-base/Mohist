@@ -14,8 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-import thermos.updater.CommandSenderUpdateCallback;
-import thermos.updater.TVersionRetriever;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -74,12 +72,7 @@ public class ThermosCommand extends Command {
             return true;
         }
         String action = args[0];
-        if ("check".equals(action)) {
-            if (!testPermission(sender, CHECK))
-                return true;
-            sender.sendMessage(ChatColor.RED + "[Thermos] " + ChatColor.GRAY + "Initiated version check...");
-            TVersionRetriever.startServer(new CommandSenderUpdateCallback(sender), false);
-        } else if ("tps".equals(action)) {
+        if ("tps".equals(action)) {
             if (!testPermission(sender, TPS))
                 return true;
             World currentWorld = null;
