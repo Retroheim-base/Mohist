@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraftforge/fluids/FluidContainerRegistry.java
++++ ../src-work/minecraft/net/minecraftforge/fluids/FluidContainerRegistry.java
+@@ -47,7 +47,9 @@
+         public int hashCode()
+         {
+             int code = 1;
+-            code = 31*code + container.getItem().hashCode();
++            if (container.getItem() != null) {
++                code = 31 * code + container.getItem().hashCode();
++            }
+             code = 31*code + container.getItemDamage();
+             if (stack != null)
+                 code = 31*code + stack.getFluid().hashCode();
