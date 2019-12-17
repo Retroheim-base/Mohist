@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -1,15 +1,19 @@
+@@ -1,15 +1,18 @@
  package net.minecraft.item;
  
 -import com.google.common.collect.HashMultimap;
@@ -15,7 +15,6 @@
  import java.util.Map.Entry;
 +import java.util.Random;
 +
-+import cc.uraniummc.Uranium;
 +import com.google.common.collect.HashMultimap;
 +import com.google.common.collect.Multimap;
 +
@@ -25,7 +24,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.enchantment.Enchantment;
  import net.minecraft.enchantment.EnchantmentDurability;
-@@ -21,11 +25,13 @@
+@@ -21,11 +24,13 @@
  import net.minecraft.entity.ai.attributes.AttributeModifier;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.player.EntityPlayer;
@@ -39,15 +38,7 @@
  import net.minecraft.stats.StatList;
  import net.minecraft.util.ChatComponentText;
  import net.minecraft.util.EnumChatFormatting;
-@@ -33,6 +39,7 @@
- import net.minecraft.util.IIcon;
- import net.minecraft.util.StatCollector;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.MinecraftForge;
- import net.minecraftforge.event.ForgeEventFactory;
- 
- public final class ItemStack
-@@ -43,7 +50,12 @@
+@@ -43,7 +48,12 @@
      private Item field_151002_e;
      public NBTTagCompound stackTagCompound;
      int itemDamage;
@@ -61,17 +52,25 @@
      private static final String __OBFID = "CL_00000043";
  
      private cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate;
-@@ -95,6 +107,9 @@
+@@ -82,8 +92,17 @@
+         {
+             this.itemDamage = 0;
+         }
++		sizeCheck(this);
+     }
  
-     public ItemStack splitStack(int p_77979_1_)
++    public static void sizeCheck(ItemStack stack)
++    {
++    	if(stack.stackSize < -1)
++    	{
++    		stack.stackSize = 0;
++    	}
++    }
++
+     public static ItemStack loadItemStackFromNBT(NBTTagCompound p_77949_0_)
      {
-+        if(p_77979_1_<=0||p_77979_1_>this.stackSize)
-+            return new ItemStack((Item)null,0,0);
-+        
-         ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.itemDamage);
- 
-         if (this.stackTagCompound != null)
-@@ -126,12 +141,14 @@
+         ItemStack itemstack = new ItemStack();
+@@ -126,12 +145,14 @@
      public boolean tryPlaceItemIntoWorld(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
      {
          if (!p_77943_2_.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
@@ -87,11 +86,12 @@
  
          return flag;
      }
-@@ -143,7 +160,14 @@
+@@ -143,7 +164,15 @@
  
      public ItemStack useItemRightClick(World p_77957_1_, EntityPlayer p_77957_2_)
      {
 -        return this.getItem().onItemRightClick(this, p_77957_1_, p_77957_2_);
++		sizeCheck(this);
 +        if(MinecraftServer.uraniumConfig.captureBlockOnItemRightClick.getValue()) {
 +            CaptureBlock tCapture = p_77957_1_.mCapture.startCapture(p_77957_2_, this);
 +            ItemStack tResult = this.getItem().onItemRightClick(this, p_77957_1_, p_77957_2_);
@@ -103,7 +103,40 @@
      }
  
      public ItemStack onFoodEaten(World p_77950_1_, EntityPlayer p_77950_2_)
-@@ -227,8 +251,22 @@
+@@ -153,7 +182,8 @@
+ 
+     public NBTTagCompound writeToNBT(NBTTagCompound p_77955_1_)
+     {
+-        p_77955_1_.setShort("id", (short)Item.getIdFromItem(this.field_151002_e));
++        sizeCheck(this);
++    	p_77955_1_.setShort("id", (short)Item.getIdFromItem(this.field_151002_e));
+         p_77955_1_.setByte("Count", (byte)this.stackSize);
+         p_77955_1_.setShort("Damage", (short)this.itemDamage);
+ 
+@@ -175,6 +205,8 @@
+         {
+             this.itemDamage = 0;
+         }
++        
++        sizeCheck(this);
+ 
+         if (p_77963_1_.hasKey("tag", 10))
+         {
+@@ -184,11 +216,13 @@
+ 
+     public int getMaxStackSize()
+     {
++    	sizeCheck(this);
+         return this.getItem().getItemStackLimit(this);
+     }
+ 
+     public boolean isStackable()
+     {
++        sizeCheck(this);
+         return this.getMaxStackSize() > 1 && (!this.isItemStackDamageable() || !this.isItemDamaged());
+     }
+ 
+@@ -227,8 +261,22 @@
          return getItem().getMaxDamage(this);
      }
  
@@ -126,7 +159,7 @@
          if (!this.isItemStackDamageable())
          {
              return false;
-@@ -250,6 +288,23 @@
+@@ -250,6 +298,23 @@
  
                  p_96631_1_ -= k;
  
@@ -150,7 +183,7 @@
                  if (p_96631_1_ <= 0)
                  {
                      return false;
-@@ -267,7 +322,7 @@
+@@ -267,7 +332,7 @@
          {
              if (this.isItemStackDamageable())
              {
@@ -159,20 +192,34 @@
                  {
                      p_77972_2_.renderBrokenItemStack(this);
                      --this.stackSize;
-@@ -288,6 +343,12 @@
-                         this.stackSize = 0;
+@@ -283,11 +348,14 @@
+                         }
                      }
  
+-                    if (this.stackSize < 0)
++                    sizeCheck(this);
++
 +                    // CraftBukkit start - Check for item breaking
 +                    if (this.stackSize == 0 && p_77972_2_ instanceof EntityPlayer)
-+                    {
+                     {
+-                        this.stackSize = 0;
 +                        org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) p_77972_2_, this);
-+                    }
+                     }
+-
 +                    // CraftBukkit end
                      this.itemDamage = 0;
                  }
              }
-@@ -419,6 +480,7 @@
+@@ -326,6 +394,8 @@
+ 
+     public ItemStack copy()
+     {
++    	sizeCheck(this);
++    	
+         ItemStack itemstack = new ItemStack(this.field_151002_e, this.stackSize, this.itemDamage);
+ 
+         if (this.stackTagCompound != null)
+@@ -419,6 +489,7 @@
  
      public void setTagCompound(NBTTagCompound p_77982_1_)
      {
@@ -180,20 +227,7 @@
          this.stackTagCompound = p_77982_1_;
      }
  
-@@ -667,6 +729,12 @@
-         NBTTagCompound nbttagcompound = new NBTTagCompound();
-         nbttagcompound.setShort("id", (short)p_77966_1_.effectId);
-         nbttagcompound.setShort("lvl", (short)((byte)p_77966_2_));
-+        for(int i=nbttaglist.tagCount()-1;i>=0;i--){
-+            NBTTagCompound tTag=nbttaglist.getCompoundTagAt(i);
-+            if(tTag.getShort("id")==(short)p_77966_1_.effectId){
-+                nbttaglist.removeTag(i);
-+            }
-+        }
-         nbttaglist.appendTag(nbttagcompound);
-     }
- 
-@@ -768,4 +836,12 @@
+@@ -768,4 +839,12 @@
  
          return ichatcomponent;
      }
