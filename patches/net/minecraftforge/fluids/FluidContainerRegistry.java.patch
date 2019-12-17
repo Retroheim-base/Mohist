@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraftforge/fluids/FluidContainerRegistry.java
 +++ ../src-work/minecraft/net/minecraftforge/fluids/FluidContainerRegistry.java
-@@ -47,8 +47,13 @@
+@@ -47,8 +47,12 @@
          public int hashCode()
          {
              int code = 1;
@@ -8,9 +8,8 @@
 -            code = 31*code + container.getItemDamage();
 +            if (container.getItem() != null) {
 +                code = 31 * code + container.getItem().hashCode();
-+
 +            }
-+            if (container != null ){
++            if (String.valueOf(container.getItemDamage()) != null ){
 +                code = 31*code + container.getItemDamage();
 +            }
              if (stack != null)
