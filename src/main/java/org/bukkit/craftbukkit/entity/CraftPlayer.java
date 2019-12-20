@@ -1,7 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.authlib.GameProfile;
+import com.google.common.collect.MapMaker;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,47 +16,39 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
+import com.mojang.authlib.GameProfile;
+
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.server.S02PacketChat;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayer;
-import org.apache.commons.lang.NotImplementedException;
+
 import org.apache.commons.lang.Validate;
-import org.bukkit.Achievement;
-import org.bukkit.BanList;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
-import org.bukkit.Statistic;
+import org.apache.commons.lang.NotImplementedException;
+import org.bukkit.*;
 import org.bukkit.Statistic.Type;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
+import org.bukkit.craftbukkit.block.CraftSign;
+import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.CraftEffect;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.block.CraftSign;
-import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.map.CraftMapView;
 import org.bukkit.craftbukkit.map.RenderData;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
@@ -74,7 +67,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
-import org.spigotmc.WatchdogThread;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -118,11 +110,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean isOnline() {
-        if(this.getHandle() instanceof FakePlayer)return true;
+        if (this.getHandle() instanceof net.minecraftforge.common.util.FakePlayer)
+	{
+	    return true;
+	}
         for (Object obj : server.getHandle().playerEntityList) {
-            if(obj==null)continue;
             net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) obj;
-            if (player.getCommandSenderName().equalsIgnoreCase(getName())||player.getUniqueID().equals(getUniqueId())) {
+            if (player != null && (this.getHandle() == player || player.getBukkitEntity() == this || this.getHandle().getGameProfile().getId().equals(player.getGameProfile().getId())))
+            {
                 return true;
             }
         }
@@ -257,13 +252,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void kickPlayer(String message) {
-        //Uranium----Watch dog thread check by xjboss
-        Thread T=Thread.currentThread();
-        if(T!= MinecraftServer.getServer().primaryThread&&T!= WatchdogThread.instance){
-            //spigot
-            throw new IllegalStateException("Asynchronous player kick!");
-        }
+        if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread) throw new IllegalStateException("Asynchronous player kick!"); // Spigot
         if (getHandle().playerNetServerHandler == null) return;
+
         getHandle().playerNetServerHandler.kickPlayerFromServer(message == null ? "" : message);
     }
 
@@ -474,7 +465,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
         net.minecraft.entity.player.EntityPlayerMP entity = getHandle();
 
-        if (getHealth() == 0 || entity.isDead) {
+        if (getHealth() == 0 || entity.isDead || entity instanceof net.minecraftforge.common.util.FakePlayer) {
             return false;
         }
 
@@ -513,7 +504,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         // Grab the To and From World Handles.
         net.minecraft.world.WorldServer fromWorld = ((CraftWorld) from.getWorld()).getHandle();
         net.minecraft.world.WorldServer toWorld = ((CraftWorld) to.getWorld()).getHandle();
-
         // Close any foreign inventory
         if (getHandle().openContainer != getHandle().inventoryContainer) {
             getHandle().closeScreen();
@@ -523,7 +513,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (fromWorld == toWorld) {
             entity.playerNetServerHandler.teleport(to);
         } else {
-            server.getHandle().respawnPlayer(entity, toWorld.dimension, cause, to); // Cauldron
+        	//Thermos....transfer them correctly?!
+            this.getHandle().mountEntity(null);
+        	thermos.thermite.ThermiteTeleportationHandler.transferPlayerToDimension(this.getHandle(), toWorld.dimension, this.getHandle().mcServer.getConfigurationManager(), to.getWorld().getEnvironment()); 
+        	 //this.getHandle().playerNetServerHandler.teleport(to);
+        	 this.getHandle().playerNetServerHandler.teleport(to);
+        	 //this.getHandle().playerNetServerHandler.setPlayerLocation(to.getX(), to.getY(), to.getZ(), this.getHandle().rotationYaw, this.getHandle().rotationPitch);
+        	//server.getHandle().respawnPlayer(entity, toWorld.dimension, false, to, false); // Cauldron
         }
         return true;
     }
@@ -1344,7 +1340,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         {
             if ( getHealth() <= 0 && isOnline() )
             {
-                server.getServer().getConfigurationManager().respawnPlayer( getHandle(), 0, TeleportCause.DEATH, null );
+                server.getServer().getConfigurationManager().respawnPlayer( getHandle(), 0 );
             }
         }
 
@@ -1356,22 +1352,19 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         @Override
         public void sendMessage(BaseComponent component) {
-            sendMessage( new BaseComponent[] { component } );
+            this.sendMessage(new BaseComponent[]{component});
         }
 
         @Override
-        public void sendMessage(BaseComponent... components) {
-            if ( getHandle().playerNetServerHandler == null ) return;
-            IChatComponent ichat=IChatComponent.Serializer.func_150699_a(ComponentSerializer.toString(components));
-            S02PacketChat packet = new S02PacketChat(ichat);
-            getHandle().playerNetServerHandler.sendPacket(packet);
+        public /* varargs */ void sendMessage(BaseComponent ... components) {
+            if (CraftPlayer.this.getHandle().playerNetServerHandler == null) {
+                return;
+            }
+            S02PacketChat packet = new S02PacketChat();
+            packet.components = components;
+            CraftPlayer.this.getHandle().playerNetServerHandler.sendPacket(packet);
         }
 
-        @Override
-        public int getPing()
-        {
-            return getHandle().ping;
-        }
     };
 
     public Player.Spigot spigot()

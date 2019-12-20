@@ -1,13 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.common.util.FakePlayerFactory;
+
+
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -21,6 +17,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 // Cauldron start
+import java.util.Map;
+import net.minecraft.entity.Entity;
+import net.minecraftforge.cauldron.entity.CraftCustomEntity;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.common.util.FakePlayerFactory;
 // Cauldron end
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
@@ -171,10 +173,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.entity.item.EntityFireworkRocket) { return new CraftFirework(server, (net.minecraft.entity.item.EntityFireworkRocket) entity); }
         // Cauldron - used for custom entities that extend Entity directly
         else if (entity instanceof net.minecraft.entity.Entity) {
-            if (entity instanceof net.minecraft.entity.IProjectile) return new cc.uraniummc.entity.CustomProjectileEntity(server, entity); // Uranium
+            if (entity instanceof net.minecraft.entity.IProjectile) return new thermos.entity.CustomProjectileEntity(server, entity); // Thermos
             return new CraftCustomEntity(server, (net.minecraft.entity.Entity) entity); }
-
-        throw new AssertionError("Unknown entity " + entity == null ? null : entity.getClass() + ": " + entity); // Cauldron - show the entity that caused exception
+	else { return null; }
+        //throw new AssertionError("Unknown entity " + entity == null ? null : entity.getClass() + ": " + entity); // Cauldron - show the entity that caused exception
     }
 
     // Cauldron start - copy of getEntity() but operates on classes instead of instances, for EntityRegistry registerBukkitType
@@ -419,8 +421,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             entity.teleportTo(location, cause.isPortal());
             return true;
         }
-        // Spigot
+        // Spigot end
         entity.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	//entity.worldObj.entityJoinedWorld(entity, false); // PaperSpigot - Prevent Server from thinking a player teleporting within the world has joined the world
         // entity.setLocation() throws no event, and so cannot be cancelled
         return true;
     }
@@ -629,47 +632,4 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return spigot;
     }
     // Spigot end
-
-    //Uranium start
-    public void setCustomName(String name) {
-        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
-            return;
-        }
-
-        if (name == null) {
-            name = "";
-        }
-
-        // Names cannot be more than 64 characters due to DataWatcher limitations
-        if (name.length() > 64) {
-            name = name.substring(0, 64);
-        }
-
-        ((net.minecraft.entity.EntityLiving) getHandle()).setCustomNameTag(name);
-    }
-
-    public String getCustomName() {
-        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
-            return null;
-        }
-
-        String name = ((net.minecraft.entity.EntityLiving) getHandle()).getCustomNameTag();
-
-        if (name == null || name.length() == 0) {
-            return null;
-        }
-
-        return name;
-    }
-
-    public void setCustomNameVisible(boolean flag) {
-        if (getHandle() instanceof net.minecraft.entity.EntityLiving) {
-            ((net.minecraft.entity.EntityLiving) getHandle()).setAlwaysRenderNameTag(flag);
-        }
-    }
-
-    public boolean isCustomNameVisible() {
-        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
-    }
-    //Uranium end
 }

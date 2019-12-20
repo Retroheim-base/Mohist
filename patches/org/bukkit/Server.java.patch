@@ -1,42 +1,37 @@
 --- ../src-base/minecraft/org/bukkit/Server.java
 +++ ../src-work/minecraft/org/bukkit/Server.java
-@@ -1,5 +1,7 @@
- package org.bukkit;
- 
-+import com.avaje.ebean.config.ServerConfig;
-+import com.google.common.collect.ImmutableList;
- import java.awt.image.BufferedImage;
- import java.io.File;
- import java.io.Serializable;
-@@ -11,7 +13,6 @@
- import java.util.Set;
+@@ -12,11 +12,13 @@
  import java.util.UUID;
  import java.util.logging.Logger;
--
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
  import org.bukkit.Warning.WarningState;
  import org.bukkit.command.CommandException;
  import org.bukkit.command.CommandSender;
-@@ -24,8 +25,10 @@
- import org.bukkit.help.HelpMap;
- import org.bukkit.inventory.Inventory;
- import org.bukkit.inventory.InventoryHolder;
-+import org.bukkit.inventory.ItemFactory;
- import org.bukkit.inventory.ItemStack;
- import org.bukkit.inventory.Recipe;
-+import org.bukkit.inventory.meta.ItemMeta;
- import org.bukkit.map.MapView;
- import org.bukkit.permissions.Permissible;
- import org.bukkit.plugin.PluginManager;
-@@ -36,12 +39,6 @@
- import org.bukkit.scoreboard.ScoreboardManager;
- import org.bukkit.util.CachedServerIcon;
- 
--import com.avaje.ebean.config.ServerConfig;
--import com.google.common.collect.ImmutableList;
--
--import org.bukkit.inventory.ItemFactory;
--import org.bukkit.inventory.meta.ItemMeta;
--
- /**
-  * Represents a server implementation.
-  */
+ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.command.PluginCommand;
++import org.bukkit.configuration.file.YamlConfiguration;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.inventory.InventoryType;
+@@ -916,4 +918,20 @@
+      */
+     @Deprecated
+     UnsafeValues getUnsafe();
++
++    public Spigot spigot();
++
++    public static class Spigot {
++        public YamlConfiguration getConfig() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        public void broadcast(BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        public /* varargs */ void broadcast(BaseComponent ... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
+ }

@@ -1,8 +1,9 @@
 package org.bukkit.craftbukkit.block;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntitySkull;
+import com.mojang.authlib.GameProfile;
+
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -100,7 +101,7 @@ public class CraftSkull extends CraftBlockState implements Skull {
     }
 
     static BlockFace getBlockFace(byte rotation) {
-        switch (rotation) {
+        switch (rotation % 16) {
             case 0:
                 return BlockFace.NORTH;
             case 1:

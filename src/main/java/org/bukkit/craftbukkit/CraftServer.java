@@ -1,24 +1,11 @@
 package org.bukkit.craftbukkit;
 
-import cc.uraniummc.Uranium;
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebean.config.ServerConfig;
-import com.avaje.ebean.config.dbplatform.SQLitePlatform;
-import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
-import com.google.common.base.Charsets;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
-import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.FMLLog;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.base64.Base64;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,25 +15,24 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javax.imageio.ImageIO;
-import jline.console.ConsoleReader;
-import net.minecraft.command.server.CommandNetstat;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedPlayerList;
-import net.minecraft.server.management.UserListEntry;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.SaveHandler;
+
+import com.google.common.base.Charsets;
+import com.google.common.cache.CacheBuilder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.base64.Base64;
+
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraftforge.cauldron.apiimpl.CauldronPluginInterface;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
-import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -68,7 +54,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
@@ -102,9 +87,9 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -118,21 +103,48 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
-import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.spigotmc.SpigotConfig;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
+import org.apache.commons.lang.Validate;
 
+import com.avaje.ebean.config.DataSourceConfig;
+import com.avaje.ebean.config.ServerConfig;
+import com.avaje.ebean.config.dbplatform.SQLitePlatform;
+import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MapMaker;
+import com.mojang.authlib.GameProfile;
 // Cauldron start
+import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
+
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.command.server.CommandNetstat;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.management.UserListEntry;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraftforge.cauldron.configuration.CauldronConfig;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 // Cauldron end
+
+import jline.console.ConsoleReader;
 
 public final class CraftServer implements Server {
     private static final Player[] EMPTY_PLAYER_ARRAY = new Player[0];
-    private final String serverName = "Mohist"; // Cauldron - temporarily keep MCPC-Plus name until plugins adapt
+    public static Spigot spigot;
+    private final String serverName = "Cauldron"; // Cauldron - temporarily keep MCPC-Plus name until plugins adapt
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final Logger logger = Logger.getLogger("Minecraft");
@@ -191,7 +203,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = Uranium.getCurrentVersion();
+        this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
         online.value = console.getPropertyManager().getBooleanProperty("online-mode", true);
 
         Bukkit.setServer(this);
@@ -209,7 +221,27 @@ public final class CraftServer implements Server {
         if (!MinecraftServer.useConsole) { // Cauldron
             getLogger().info("Console input is disabled due to --noconsole command argument");
         }
+        this.spigot = new Server.Spigot(){
 
+            @Override
+            public YamlConfiguration getConfig() {
+                return SpigotConfig.getConfig();
+            }
+
+            @Override
+            public void broadcast(BaseComponent component) {
+                for (Player player : CraftServer.this.getOnlinePlayers()) {
+                    player.spigot().sendMessage(component);
+                }
+            }
+
+            @Override
+            public /* varargs */ void broadcast(BaseComponent ... components) {
+                for (Player player : CraftServer.this.getOnlinePlayers()) {
+                    player.spigot().sendMessage(components);
+                }
+            }
+        };
         /* Cauldron start - moved to MinecraftServer so FML/Forge can access during server startup
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());        
         configuration.options().copyDefaults(true);
@@ -391,7 +423,6 @@ public final class CraftServer implements Server {
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.server.CommandTeleport(), "/tp [player] <target>\n/tp [player] <x> <y> <z>"));
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.server.CommandMessage(), "/tell <playername> <message>"));
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.server.CommandMessageRaw(), "/tellraw <playername> <raw message>"));
-        // Uranium retrotitle support
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.server.CommandTestFor(), "/testfor <playername | selector> [dataTag]"));
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.server.CommandTestForBlock(), "/testforblock <x> <y> <z> <tilename> [datavalue] [dataTag]"));
         commandMap.register("minecraft", new VanillaCommandWrapper(new net.minecraft.command.CommandTime(), "/time set <value>\n/time add <value>"));
@@ -423,7 +454,7 @@ public final class CraftServer implements Server {
 
     @Override
     public String getName() {
-        return MinecraftServer.uraniumConfig.uraniumName.getValue().isEmpty()?serverName:MinecraftServer.uraniumConfig.uraniumName.getValue();
+        return serverName;
     }
 
     @Override
@@ -1299,21 +1330,10 @@ public final class CraftServer implements Server {
             if (result == null) {
             // Spigot start
             GameProfile profile = null;
-            if ((MinecraftServer.getServer().isServerInOnlineMode()&&!MinecraftServer.uraniumConfig.forceuseOfflineUUID.getValue()) || (org.spigotmc.SpigotConfig.bungee&&!MinecraftServer.uraniumConfig.forceuseOfflineUUID.getValue())) {
+            if (MinecraftServer.getServer().isServerInOnlineMode() || org.spigotmc.SpigotConfig.bungee) {
                 profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(name);
             }
             if (profile == null) {
-                final String uname;
-                switch (MinecraftServer.uraniumConfig.uuidMode.getValue()){
-                    case 1:
-                        uname=name.toLowerCase();
-                        break;
-                    case 2:
-                        uname=name.toUpperCase();
-                        break;
-                    default:
-                        uname=name;
-                }
                 // Make an OfflinePlayer using an offline mode UUID since the name has no profile
                 result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
             } else {
@@ -1672,7 +1692,14 @@ public final class CraftServer implements Server {
         String token = event.getLastToken();
         for (Player p : getOnlinePlayers()) {
             if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token)) {
-                completions.add(p.getName());
+            	if (event.isPinging())
+            	{
+            		StringBuilder sb = new StringBuilder(1 + p.getName().length());
+            		sb.append('@'); sb.append(p.getName());
+            		completions.add(sb.toString());
+            	}
+            	else
+            		completions.add(p.getName());
             }
         }
         pluginManager.callEvent(event);
@@ -1756,5 +1783,10 @@ public final class CraftServer implements Server {
     @Override
     public UnsafeValues getUnsafe() {
         return CraftMagicNumbers.INSTANCE;
+    }
+
+    @Override
+    public Server.Spigot spigot() {
+        return this.spigot;
     }
 }

@@ -1,37 +1,29 @@
 --- ../src-base/minecraft/org/bukkit/Material.java
 +++ ../src-work/minecraft/org/bukkit/Material.java
-@@ -1,9 +1,19 @@
- package org.bukkit;
- 
-+import com.google.common.collect.Maps;
-+import java.lang.reflect.Array;
+@@ -3,6 +3,22 @@
  import java.lang.reflect.Constructor;
+ import java.util.Map;
+ 
++// Cauldron start
++import java.lang.reflect.Array;
++import java.lang.reflect.Constructor;
 +import java.lang.reflect.Field;
 +import java.lang.reflect.Method;
 +import java.util.ArrayList;
 +import java.util.Arrays;
 +import java.util.List;
- import java.util.Map;
--
++
++import org.bukkit.inventory.ItemStack;
++
++import net.minecraftforge.common.util.EnumHelper;
 +import net.minecraftforge.cauldron.api.inventory.BukkitOreDictionary;
 +import net.minecraftforge.cauldron.api.inventory.OreDictionaryEntry;
-+import net.minecraftforge.common.util.EnumHelper;
++// Cauldron end
++
  import org.apache.commons.lang.Validate;
-+import org.bukkit.inventory.ItemStack;
  import org.bukkit.map.MapView;
  import org.bukkit.material.Bed;
- import org.bukkit.material.Button;
-@@ -56,7 +66,8 @@
- import org.bukkit.potion.Potion;
- import org.bukkit.util.Java15Compat;
- 
--import com.google.common.collect.Maps;
-+// Cauldron start
-+// Cauldron end
- 
- /**
-  * An enum of all material IDs accepted by the official server and client
-@@ -418,14 +429,30 @@
+@@ -418,14 +434,30 @@
      private final int id;
      private final Constructor<? extends MaterialData> ctor;
      private static Material[] byId = new Material[383];
@@ -63,7 +55,7 @@
      private Material(final int id, final int stack) {
          this(id, stack, MaterialData.class);
      }
-@@ -526,7 +553,7 @@
+@@ -526,10 +558,17 @@
       * @return true if this material is a block
       */
      public boolean isBlock() {
@@ -72,7 +64,17 @@
      }
  
      /**
-@@ -615,16 +642,202 @@
++     * Checks if the material is a forge block
++     *
++     * @return true if this material is a forge block
++     */
++    public boolean isForgeBlock() { return isForgeBlock; }
++
++    /**
+      * Checks if this Material is edible.
+      *
+      * @return true if this Material is edible.
+@@ -615,16 +654,202 @@
          } catch (NumberFormatException ex) {}
  
          if (result == null) {

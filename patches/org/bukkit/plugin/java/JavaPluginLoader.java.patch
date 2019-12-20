@@ -1,24 +1,22 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
-@@ -1,22 +1,34 @@
+@@ -1,5 +1,15 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
-+
-+import cc.uraniummc.eventexecutor.ASMEventExecutorGenerate;
-+import cc.uraniummc.eventexecutor.EventExecutorImp;
++import java.io.BufferedReader;
++import java.io.InputStreamReader;
 +import com.google.common.collect.BiMap;
 +import com.google.common.collect.HashBiMap;
-+import com.google.common.collect.ImmutableList;
-+import java.io.BufferedReader;
++import net.md_5.specialsource.InheritanceMap;
++import net.md_5.specialsource.JarMapping;
++import net.md_5.specialsource.transformer.MavenShade;
++// Cauldron end
++
  import java.io.File;
  import java.io.FileNotFoundException;
  import java.io.IOException;
- import java.io.InputStream;
-+import java.io.InputStreamReader;
- import java.lang.reflect.InvocationTargetException;
- import java.lang.reflect.Method;
- import java.util.Arrays;
+@@ -10,6 +20,7 @@
  import java.util.HashMap;
  import java.util.HashSet;
  import java.util.LinkedHashMap;
@@ -26,26 +24,18 @@
  import java.util.Map;
  import java.util.Set;
  import java.util.jar.JarEntry;
- import java.util.jar.JarFile;
- import java.util.logging.Level;
- import java.util.regex.Pattern;
--
-+import net.md_5.specialsource.InheritanceMap;
-+import net.md_5.specialsource.JarMapping;
-+import net.md_5.specialsource.transformer.MavenShade;
- import org.apache.commons.lang.Validate;
- import org.bukkit.Server;
- import org.bukkit.Warning;
-@@ -39,7 +51,9 @@
+@@ -39,8 +50,11 @@
  import org.bukkit.plugin.RegisteredListener;
  import org.bukkit.plugin.TimedRegisteredListener;
  import org.bukkit.plugin.UnknownDependencyException;
-+import org.spigotmc.CustomTimingsHandler;
++import org.spigotmc.CustomTimingsHandler; // Spigot
  import org.yaml.snakeyaml.error.YAMLException;
-+// Cauldron end
  
++import com.google.common.collect.ImmutableList;
++
  /**
   * Represents a Java plugin loader, allowing plugins in the form of .jar
+  */
 @@ -49,6 +63,7 @@
      private final Pattern[] fileFilters = new Pattern[] { Pattern.compile("\\.jar$"), };
      private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -167,71 +157,36 @@
      public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
          Validate.notNull(file, "File cannot be null");
  
-@@ -232,7 +270,7 @@
-         Set<Method> methods;
-         try {
-             Method[] publicMethods = listener.getClass().getMethods();
--            methods = new HashSet<Method>(publicMethods.length, Float.MAX_VALUE);
-+            methods = new HashSet<Method>(publicMethods.length);
-             for (Method method : publicMethods) {
-                 methods.add(method);
-             }
-@@ -283,21 +321,41 @@
+@@ -283,13 +321,19 @@
                  }
              }
  
--            EventExecutor executor = new EventExecutor() {
--                public void execute(Listener listener, Event event) throws EventException {
--                    try {
--                        if (!eventClass.isAssignableFrom(event.getClass())) {
--                            return;
-+            EventExecutor executor = ASMEventExecutorGenerate.createWrapperInstance(plugin,listener,method);
-+            if(executor == null){
-+                final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
-+                        + " Event: " + listener.getClass().getName() + "::"
-+                        + method.getName()
-+                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
-+                executor = new EventExecutor() {
-+
-+                    public void execute(Listener listener, Event event) throws EventException {
-+                        try {
-+                            if (!eventClass.isAssignableFrom(event.getClass())) {
-+                                return;
-+                            }
-+                            // Spigot start
-+                            boolean isAsync = event.isAsynchronous();
-+                            if (!isAsync) timings.startTiming();
-+                            method.invoke(listener, event);
-+                            if (!isAsync) timings.stopTiming();
-+                            // Spigot end
-+                        } catch (InvocationTargetException ex) {
-+                            throw new EventException(ex.getCause());
-+                        } catch (Throwable t) {
-+                            throw new EventException(t);
++            final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::" + method.getName()+"("+eventClass.getSimpleName()+")", pluginParentTimer); // Spigot
+             EventExecutor executor = new EventExecutor() {
+                 public void execute(Listener listener, Event event) throws EventException {
+                     try {
+                         if (!eventClass.isAssignableFrom(event.getClass())) {
+                             return;
                          }
--                        method.invoke(listener, event);
--                    } catch (InvocationTargetException ex) {
--                        throw new EventException(ex.getCause());
--                    } catch (Throwable t) {
--                        throw new EventException(t);
++                        // Spigot start
++                        boolean isAsync = event.isAsynchronous();
++                        if (!isAsync) timings.startTiming();
+                         method.invoke(listener, event);
++                        if (!isAsync) timings.stopTiming();
++                        // Spigot end
+                     } catch (InvocationTargetException ex) {
+                         throw new EventException(ex.getCause());
+                     } catch (Throwable t) {
+@@ -297,7 +341,7 @@
                      }
--                }
--            };
+                 }
+             };
 -            if (useTimings) {
-+                };
-+            } else {
-+                CustomTimingsHandler tTiming = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
-+                        + " Event: " + listener.getClass().getName() + "::"
-+                        + method.getName() + "_ASM"
-+                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
-+                ((EventExecutorImp)executor).initExecute(eventClass, tTiming);
-+            }
-+
 +            if (false) { // Spigot - RL handles useTimings check now
                  eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
              } else {
                  eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
-@@ -362,4 +420,44 @@
+@@ -362,4 +406,44 @@
              }
          }
      }

@@ -1,29 +1,26 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/AchievementCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/AchievementCommand.java
-@@ -1,15 +1,15 @@
- package org.bukkit.command.defaults;
+@@ -117,7 +117,7 @@
+                 return true;
+             }
  
-+import com.google.common.collect.ImmutableList;
- import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.List;
--
- import org.apache.commons.lang.Validate;
- import org.bukkit.Achievement;
- import org.bukkit.Bukkit;
- import org.bukkit.ChatColor;
--import org.bukkit.Statistic;
- import org.bukkit.Material;
-+import org.bukkit.Statistic;
- import org.bukkit.Statistic.Type;
- import org.bukkit.command.Command;
- import org.bukkit.command.CommandSender;
-@@ -18,8 +18,6 @@
- import org.bukkit.event.player.PlayerAchievementAwardedEvent;
- import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+-            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic), player.getStatistic(statistic) + 1, entityType);
++            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic, entityType), player.getStatistic(statistic, entityType) + 1, entityType);
+             Bukkit.getServer().getPluginManager().callEvent(event);
+             if (event.isCancelled()) {
+                 sender.sendMessage(String.format("Unable to increment %s for %s", statisticString, player.getName()));
+@@ -141,12 +141,12 @@
  
--import com.google.common.collect.ImmutableList;
--
- public class AchievementCommand extends VanillaCommand {
-     public AchievementCommand() {
-         super("achievement");
+             Material material = Material.getMaterial(id);
+ 
+-            if (material == null) {
++            if (material == null || org.bukkit.craftbukkit.CraftStatistic.getMaterialStatistic(statistic, material) == null) {
+                 sender.sendMessage(String.format("Unknown achievement or statistic '%s'", statisticString));
+                 return true;
+             }
+ 
+-            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic), player.getStatistic(statistic) + 1, material);
++            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic, material), player.getStatistic(statistic, material) + 1, material);
+             Bukkit.getServer().getPluginManager().callEvent(event);
+             if (event.isCancelled()) {
+                 sender.sendMessage(String.format("Unable to increment %s for %s", statisticString, player.getName()));

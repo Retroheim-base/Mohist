@@ -2,37 +2,39 @@ package org.spigotmc;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.effect.EntityWeatherEffect;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.item.EntityFireworkRocket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.effect.EntityWeatherEffect;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.util.MathHelper;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+
+import org.bukkit.craftbukkit.SpigotTimings;
+// Cauldron start
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
-import org.bukkit.craftbukkit.SpigotTimings;
-
-// Cauldron start
 // Cauldron end
 
 public class ActivationRange
@@ -72,7 +74,7 @@ public class ActivationRange
      * These entities are excluded from Activation range checks.
      *
      * @param entity
-     * @param config
+     * @param world
      * @return boolean If it should always tick.
      */
     public static boolean initializeEntityActivationState(Entity entity, SpigotWorldConfig config)
@@ -99,6 +101,7 @@ public class ActivationRange
                 || entity instanceof EntityFireball
                 || entity instanceof EntityWeatherEffect
                 || entity instanceof EntityTNTPrimed
+                || entity instanceof EntityFallingBlock // PaperSpigot - Always tick falling blocks
                 || entity instanceof EntityEnderCrystal
                 || entity instanceof EntityFireworkRocket
                 || entity instanceof EntityVillager
@@ -316,10 +319,15 @@ public class ActivationRange
         // Make sure not on edge of unloaded chunk
         int x = net.minecraft.util.MathHelper.floor_double( entity.posX );
         int z = net.minecraft.util.MathHelper.floor_double( entity.posZ );
-        if ( isActive && !entity.worldObj.doChunksNearChunkExist( x, 0, z, 16 ) ) {
+        
+        if ( isActive && !(entity.worldObj.isActiveBlockCoord(x, z) || entity.worldObj.doChunksNearChunkExist( x, 0, z, 16 ) )) {
             isActive = false;
         }
-
+        
+        if(entity instanceof EntityFireworkRocket || !entity.isAddedToChunk()) // Force continued activation for teleporting entities
+        {
+        	isActive = true;
+        }
         SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.conversations;
 
 import java.util.LinkedList;
 import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;

@@ -1,22 +1,28 @@
 package org.spigotmc;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.cauldron.CauldronHooks;
+import net.minecraftforge.cauldron.configuration.CauldronConfig;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 
 public class WatchdogThread extends Thread
 {
 
-    public static WatchdogThread instance;
+    private static WatchdogThread instance;
     private final long timeoutTime;
     private final long warningTime;
     private final boolean restart;
@@ -65,7 +71,7 @@ public class WatchdogThread extends Thread
             {
                 Logger log = Bukkit.getServer().getLogger();
                 log.log(Level.SEVERE, "The server has stopped responding!");
-                log.log(Level.SEVERE, "Please report this to https://github.com/MinecraftPortCentral/Cauldron/issues");
+                log.log(Level.SEVERE, "Please report this to https://github.com/CyberdyneCC/Thermos/issues");
                 log.log(Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports");
                 log.log(Level.SEVERE, "Cauldron version: " + Bukkit.getServer().getVersion());
                 
@@ -83,7 +89,7 @@ public class WatchdogThread extends Thread
                 {
                     log.log(Level.SEVERE, "  Dimension:" + world.provider.dimensionId);
                     log.log(Level.SEVERE,
-                            "  Loaded Chunks: " + world.theChunkProviderServer.getLoadedChunkCount() + " Active Chunks: " + world.activeChunkSet.size()
+                            "  Loaded Chunks: " + world.theChunkProviderServer.loadedChunkHashMap_KC.rawThermos().size() + " Active Chunks: " + world.activeChunkSet.size()
                                     + " Entities: " + world.loadedEntityList.size() + " Tile Entities: " + world.loadedTileEntityList.size());
                     log.log(Level.SEVERE, "  Entities Last Tick: " + world.entitiesTicked);
                     log.log(Level.SEVERE, "  Tiles Last Tick: " + world.tilesTicked);
@@ -147,7 +153,7 @@ public class WatchdogThread extends Thread
                 for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
                 {
                     log.log(Level.WARNING, "  Dimension:" + world.provider.dimensionId);
-                    log.log(Level.WARNING, "  Loaded Chunks: " + world.theChunkProviderServer.getLoadedChunkCount() +
+                    log.log(Level.WARNING, "  Loaded Chunks: " + world.theChunkProviderServer.loadedChunkHashMap_KC.rawThermos().size() +
                             " Active Chunks: " + world.activeChunkSet.size() +
                             " Entities: " + world.loadedEntityList.size() +
                             " Tile Entities: " + world.loadedTileEntityList.size());

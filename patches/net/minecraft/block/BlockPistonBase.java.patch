@@ -8,12 +8,11 @@
  import net.minecraft.client.renderer.texture.IIconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.entity.Entity;
-@@ -21,6 +22,13 @@
+@@ -21,6 +22,12 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import net.minecraftforge.common.util.ForgeDirection;
 +import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.event.block.BlockPistonRetractEvent;
 +import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -22,7 +21,7 @@
  public class BlockPistonBase extends Block
  {
      private final boolean isSticky;
-@@ -128,13 +136,37 @@
+@@ -128,13 +135,37 @@
  
              if (flag && !isExtended(l))
              {
@@ -61,7 +60,7 @@
                  p_150078_1_.setBlockMetadataWithNotify(p_150078_2_, p_150078_3_, p_150078_4_, i1, 2);
                  p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 1, i1);
              }
-@@ -297,6 +329,11 @@
+@@ -297,6 +328,11 @@
  
      public static int getPistonOrientation(int p_150076_0_)
      {
@@ -73,7 +72,7 @@
          return p_150076_0_ & 7;
      }
  
-@@ -328,7 +365,7 @@
+@@ -328,7 +364,7 @@
  
      private static boolean canPushBlock(Block p_150080_0_, World p_150080_1_, int p_150080_2_, int p_150080_3_, int p_150080_4_, boolean p_150080_5_)
      {
@@ -82,12 +81,7 @@
          {
              return false;
          }
-@@ -362,11 +399,17 @@
-             }
- 
-             return !(p_150080_1_.getBlock(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.getBlockMetadata(p_150080_2_, p_150080_3_, p_150080_4_)));
--            
-+
+@@ -366,7 +402,13 @@
          }
      }
  
@@ -102,7 +96,7 @@
      {
          int i1 = p_150077_1_ + Facing.offsetsXForSide[p_150077_4_];
          int j1 = p_150077_2_ + Facing.offsetsYForSide[p_150077_4_];
-@@ -379,7 +422,7 @@
+@@ -379,7 +421,7 @@
              {
                  if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
                  {
@@ -111,7 +105,7 @@
                  }
  
                  Block block = p_150077_0_.getBlock(i1, j1, k1);
-@@ -388,14 +431,14 @@
+@@ -388,14 +430,14 @@
                  {
                      if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
                      {
@@ -128,7 +122,7 @@
                          }
  
                          i1 += Facing.offsetsXForSide[p_150077_4_];
-@@ -407,7 +450,7 @@
+@@ -407,7 +449,7 @@
                  }
              }
  
@@ -137,23 +131,3 @@
          }
      }
  
-@@ -464,7 +507,7 @@
-             Block[] ablock;
-             int k2;
-             int l2;
--            int i3;
-+            int i3=0;
- 
-             for (ablock = new Block[13]; i1 != p_150079_2_ || j1 != p_150079_3_ || k1 != p_150079_4_; k1 = i3)
-             {
-@@ -507,4 +550,10 @@
-             return true;
-         }
-     }
-+
-+    @Override
-+    public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis) {
-+
-+        return super.rotateBlock(worldObj, x, y, z, axis);
-+    }
- }

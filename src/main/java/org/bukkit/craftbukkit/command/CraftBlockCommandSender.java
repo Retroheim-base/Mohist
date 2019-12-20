@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.command;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandBlockLogic;
+
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 

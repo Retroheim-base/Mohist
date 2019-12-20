@@ -1,22 +1,41 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/OpCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/OpCommand.java
-@@ -1,9 +1,9 @@
- package org.bukkit.command.defaults;
- 
-+import com.google.common.collect.ImmutableList;
- import java.util.ArrayList;
- import java.util.Collections;
- import java.util.List;
--
- import org.apache.commons.lang.Validate;
- import org.bukkit.Bukkit;
- import org.bukkit.ChatColor;
-@@ -13,8 +13,6 @@
+@@ -12,6 +12,8 @@
+ import org.bukkit.command.CommandSender;
  import org.bukkit.entity.Player;
  import org.bukkit.util.StringUtil;
++import thermos.Thermos;
++import net.minecraft.server.MinecraftServer;
  
--import com.google.common.collect.ImmutableList;
--
- public class OpCommand extends VanillaCommand {
-     public OpCommand() {
-         super("op");
+ import com.google.common.collect.ImmutableList;
+ 
+@@ -32,10 +34,26 @@
+         }
+ 
+         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+-        player.setOp(true);
+ 
+-        Command.broadcastCommandMessage(sender, "Opped " + args[0]);
+-        return true;
++        if(MinecraftServer.thermosConfig.opConsoleOnly.getValue()) {
++
++            if(!(sender instanceof Player)) {
++                player.setOp(true);
++
++                Command.broadcastCommandMessage(sender, "Opped " + args[0]);
++                return true;
++            } else {
++                sender.sendMessage(ChatColor.RED + "This command can only be run in the console.");
++                return false;
++            }
++
++        } else {
++            player.setOp(true);
++
++            Command.broadcastCommandMessage(sender, "Opped " + args[0]);
++            return true;
++        }
++
+     }
+ 
+     @Override

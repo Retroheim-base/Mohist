@@ -1,26 +1,15 @@
 --- ../src-base/minecraft/org/bukkit/event/entity/EntityDamageEvent.java
 +++ ../src-work/minecraft/org/bukkit/event/entity/EntityDamageEvent.java
-@@ -1,8 +1,10 @@
- package org.bukkit.event.entity;
- 
-+import com.google.common.base.Function;
-+import com.google.common.base.Functions;
-+import com.google.common.collect.ImmutableMap;
- import java.util.EnumMap;
- import java.util.Map;
--
- import org.apache.commons.lang.Validate;
- import org.bukkit.entity.Entity;
- import org.bukkit.entity.Player;
-@@ -10,15 +12,15 @@
+@@ -10,6 +10,8 @@
  import org.bukkit.event.HandlerList;
  import org.bukkit.util.NumberConversions;
  
--import com.google.common.collect.ImmutableMap;
--
++import com.google.common.base.Function;
++import com.google.common.base.Functions;
+ import com.google.common.collect.ImmutableMap;
+ 
  /**
-  * Stores data for damage events
-  */
+@@ -18,7 +20,9 @@
  public class EntityDamageEvent extends EntityEvent implements Cancellable {
      private static final HandlerList handlers = new HandlerList();
      private static final DamageModifier[] MODIFIERS = DamageModifier.values();
@@ -30,7 +19,7 @@
      private final Map<DamageModifier, Double> originals;
      private boolean cancelled;
      private final DamageCause cause;
-@@ -30,16 +32,20 @@
+@@ -30,16 +34,20 @@
  
      @Deprecated
      public EntityDamageEvent(final Entity damagee, final DamageCause cause, final double damage) {
@@ -53,7 +42,7 @@
      }
  
      public boolean isCancelled() {
-@@ -149,11 +155,39 @@
+@@ -149,11 +157,39 @@
      }
  
      /**

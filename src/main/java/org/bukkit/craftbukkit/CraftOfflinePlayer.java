@@ -1,14 +1,18 @@
 package org.bukkit.craftbukkit;
 
-import com.mojang.authlib.GameProfile;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -147,7 +151,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
                 return (player.playerNetServerHandler != null) ? player.playerNetServerHandler.getPlayerB() : null; // Cauldron
             }
         }
-        EntityPlayer player = net.minecraftforge.common.util.FakePlayerFactory.getFakePlayers().get(profile);
+        EntityPlayer player = net.minecraftforge.common.util.FakePlayerFactory.fakePlayers.get(profile);
         return player != null ? (Player)player.getBukkitEntity() : null;
     }
 

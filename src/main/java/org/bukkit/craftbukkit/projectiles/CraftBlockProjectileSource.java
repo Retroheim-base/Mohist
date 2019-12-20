@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.projectiles;
 
 import java.util.Random;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

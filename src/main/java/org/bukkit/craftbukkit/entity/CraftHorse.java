@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.UUID;
 import net.minecraft.entity.passive.EntityHorse;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
@@ -9,6 +8,8 @@ import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.inventory.HorseInventory;
+
+import java.util.UUID;
 
 public class CraftHorse extends CraftAnimals implements Horse {
 

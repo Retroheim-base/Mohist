@@ -1,11 +1,13 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Team;
+
+import com.google.common.collect.ImmutableSet;
 
 
 final class CraftTeam extends CraftScoreboardComponent implements Team {
@@ -107,45 +109,28 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
 
     public void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(player, "OfflinePlayer cannot be null");
-        this.addEntry(player.getName());
-    }
-
-    @Override
-    public void addEntry(String player) throws IllegalStateException,IllegalArgumentException{
-        Validate.notNull(player, "PlayerName cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.func_151392_a(player, team.getRegisteredName());
+        scoreboard.board.func_151392_a(player.getName(), team.getRegisteredName());
     }
 
     public boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {
-        return this.removeEntry(player.getName());
-    }
-    
-    @Override
-    public boolean removeEntry(String player) throws IllegalStateException,IllegalArgumentException{
-        Validate.notNull(player, "PlayerName cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        if (!team.getMembershipCollection().contains(player)) {
+        if (!team.getMembershipCollection().contains(player.getName())) {
             return false;
         }
 
-        scoreboard.board.removePlayerFromTeam(player, team);
+        scoreboard.board.removePlayerFromTeam(player.getName(), team);
         return true;
     }
 
     public boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "OfflinePlayer cannot be null");
-        return this.hasEntry(player.getName());
-    }
-    
-    @Override
-    public boolean hasEntry(String entry) throws IllegalArgumentException,IllegalStateException{
-        Validate.notNull(entry, "PlayerName cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        return team.getMembershipCollection().contains(entry);
+        return team.getMembershipCollection().contains(player.getName());
     }
 
     @Override

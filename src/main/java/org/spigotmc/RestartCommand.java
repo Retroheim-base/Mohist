@@ -1,9 +1,12 @@
 package org.spigotmc;
 
 import java.io.File;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
 public class RestartCommand extends Command
@@ -44,8 +47,15 @@ public class RestartCommand extends Command
                 net.minecraft.server.dedicated.DedicatedServer.allowPlayerLogins = false;
 
                 // Kick all players
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.kickPlayer(SpigotConfig.restartMessage);
+                for ( Object p :  net.minecraft.server.MinecraftServer.getServer().getConfigurationManager().playerEntityList.toArray() )
+                {
+                    if(p instanceof net.minecraft.entity.player.EntityPlayerMP)
+                    {
+                        net.minecraft.entity.player.EntityPlayerMP mp = ( net.minecraft.entity.player.EntityPlayerMP)p;
+                        mp.playerNetServerHandler.kickPlayerFromServer(SpigotConfig.restartMessage);
+                        mp.playerNetServerHandler.netManager.isChannelOpen();
+                    }
+
                 }
 
                 // Give the socket a chance to send the packets

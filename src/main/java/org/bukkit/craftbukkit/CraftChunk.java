@@ -2,17 +2,19 @@ package org.bukkit.craftbukkit;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+
+
 import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
+import org.bukkit.ChunkSnapshot;
 
 public class CraftChunk implements Chunk {
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
-    private final net.minecraft.world.WorldServer worldServer;
+    private final net.minecraft.world.World worldServer;
     private final int x;
     private final int z;
     private static final byte[] emptyData = new byte[2048];
@@ -24,7 +26,7 @@ public class CraftChunk implements Chunk {
             this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
         }
 
-        worldServer = getHandle().worldObj instanceof net.minecraft.world.WorldServer ? (net.minecraft.world.WorldServer) getHandle().worldObj : null;
+        worldServer = getHandle().worldObj instanceof net.minecraft.world.World ? (net.minecraft.world.World) getHandle().worldObj : null; // Thermos - use world instead of worldserver for NatureOverhaul
         x = getHandle().xPosition;
         z = getHandle().zPosition;
     }

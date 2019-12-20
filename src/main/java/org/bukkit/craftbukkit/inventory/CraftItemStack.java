@@ -1,17 +1,21 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Material;
-import org.bukkit.configuration.serialization.DelegateDeserialization;
 import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS;
 import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_ID;
 import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
+
+import java.util.Map;
+
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -171,7 +175,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getMaxStackSize() {
-        return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getItemStackLimit(this.handle);
+        return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getItemStackLimit();
     }
 
     @Override
@@ -369,7 +373,7 @@ public final class CraftItemStack extends ItemStack {
 
         if (item.stackTagCompound == null)
         {
-            item.stackTagCompound = new net.minecraft.nbt.NBTTagCompound();
+            item.stackTagCompound = item.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
         }
 
         ((CraftMetaItem)itemMeta).applyToItem(item.stackTagCompound);

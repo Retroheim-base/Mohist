@@ -1,28 +1,29 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import net.minecraft.server.MinecraftServer;
+
+import gnu.trove.map.hash.TObjectIntHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.Metrics;
 
 public class SpigotConfig
 {
 
-    private static final File CONFIG_FILE = new File(MinecraftServer.serverConfigDir, "spigot.yml" );
+    private static final File CONFIG_FILE = new File( "spigot.yml" );
     private static final String HEADER = "This is the main configuration file for Spigot.\n"
             + "As you can see, there's tons to configure. Some options may impact gameplay, so use\n"
             + "with caution, and make sure you know what each option does before configuring.\n"
@@ -39,6 +40,8 @@ public class SpigotConfig
     static int version;
     static Map<String, Command> commands;
     /*========================================================================*/
+    private static Metrics metrics;
+
     public static void init()
     {
         config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
@@ -58,7 +61,18 @@ public class SpigotConfig
         {
             net.minecraft.server.MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
         }
-        new Metrics();
+
+        if ( metrics == null )
+        {
+            try
+            {
+                metrics = new Metrics();
+                metrics.start();
+            } catch ( IOException ex )
+            {
+                Bukkit.getServer().getLogger().log( Level.SEVERE, "Could not start metrics service", ex );
+            }
+        }
     }
 
     static void readConfig(Class<?> clazz, Object instance)
@@ -262,4 +276,10 @@ public class SpigotConfig
     {
         fullMatchRate = getInt( "settings.fullMatchRate", 10);
     }
+
+    //thermos start - Add getconfig method to spigot
+    public static YamlConfiguration getConfig() {
+        return config;
+    }
+    //thermos end
 }

@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/org/bukkit/event/player/PlayerLoginEvent.java
 +++ ../src-work/minecraft/org/bukkit/event/player/PlayerLoginEvent.java
-@@ -1,7 +1,6 @@
- package org.bukkit.event.player;
- 
- import java.net.InetAddress;
--
- import org.bukkit.entity.Player;
- import org.bukkit.event.HandlerList;
- 
-@@ -14,6 +13,7 @@
+@@ -14,6 +14,7 @@
      private final String hostname;
      private Result result = Result.ALLOWED;
      private String message = "";
@@ -16,7 +8,7 @@
  
      /**
       * @deprecated Address should be provided in other constructor
-@@ -40,19 +40,26 @@
+@@ -40,19 +41,26 @@
       * @param address The address the player used to connect, provided for
       *     timing issues
       */
@@ -45,7 +37,7 @@
      }
  
      /**
-@@ -65,13 +72,24 @@
+@@ -65,13 +73,24 @@
       * @param result The result status for this event
       * @param message The message to be displayed if result denies login
       */

@@ -1,34 +1,15 @@
 --- ../src-base/minecraft/org/bukkit/World.java
 +++ ../src-work/minecraft/org/bukkit/World.java
-@@ -1,17 +1,24 @@
- package org.bukkit;
- 
- import java.io.File;
--import org.bukkit.generator.ChunkGenerator;
- import java.util.Collection;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
- import java.util.UUID;
--
- import org.bukkit.block.Biome;
- import org.bukkit.block.Block;
--import org.bukkit.entity.*;
-+import org.bukkit.entity.Arrow;
-+import org.bukkit.entity.CreatureType;
-+import org.bukkit.entity.Entity;
-+import org.bukkit.entity.EntityType;
-+import org.bukkit.entity.FallingBlock;
-+import org.bukkit.entity.Item;
-+import org.bukkit.entity.LightningStrike;
-+import org.bukkit.entity.LivingEntity;
-+import org.bukkit.entity.Player;
- import org.bukkit.generator.BlockPopulator;
-+import org.bukkit.generator.ChunkGenerator;
- import org.bukkit.inventory.ItemStack;
- import org.bukkit.metadata.Metadatable;
+@@ -17,6 +17,8 @@
  import org.bukkit.plugin.messaging.PluginMessageRecipient;
-@@ -1155,6 +1162,56 @@
+ import org.bukkit.util.Vector;
+ 
++import net.minecraft.world.WorldServer;
++
+ /**
+  * Represents a world, which may contain entities, chunks and blocks
+  */
+@@ -1155,6 +1157,56 @@
       */
      public boolean isGameRule(String rule);
  
@@ -85,7 +66,7 @@
      /**
       * Represents various map environment types that a world may be
       */
-@@ -1203,6 +1260,12 @@
+@@ -1203,10 +1255,18 @@
              return lookup.get(id);
          }
  
@@ -98,3 +79,9 @@
          static {
              for (Environment env : values()) {
                  lookup.put(env.getId(), env);
+             }
+         }
+     }
++    
++    public abstract WorldServer getWorldServer();
+ }
