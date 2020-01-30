@@ -5,7 +5,6 @@ import thermos.VersionParser
 
 buildscript {
     repositories {
-        maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
         maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }
         maven {
             name 'forge'
