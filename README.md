@@ -9,8 +9,9 @@
 ![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
 [![](https://img.shields.io/badge/Forge-1.7.10--10.13.4.1614-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Spigot-1.7.10-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
-![](https://img.shields.io/badge/OracleJdk-8u231-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/OracleJdk-8u241-brightgreen.svg?colorB=469C00)
 ![](https://img.shields.io/badge/Gradle-2.8-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/ideaIU-jbr8-brightgreen.svg?colorB=469C00)
 
 ### Getting Help
    [**Home**](https://mohist.red/)
