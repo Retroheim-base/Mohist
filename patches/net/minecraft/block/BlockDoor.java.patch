@@ -1,15 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -16,6 +16,8 @@
+@@ -15,6 +15,7 @@
+ import net.minecraft.util.Vec3;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- 
 +import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
-+
+ 
  public class BlockDoor extends Block
  {
-     @SideOnly(Side.CLIENT)
-@@ -329,15 +331,32 @@
+@@ -329,15 +330,32 @@
                  {
                      this.dropBlockAsItem(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, l, 0);
                  }

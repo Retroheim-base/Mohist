@@ -1,15 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCommandBlock.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCommandBlock.java
-@@ -10,6 +10,8 @@
+@@ -9,6 +9,7 @@
+ import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;
  import net.minecraft.world.World;
- 
 +import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
-+
+ 
  public class BlockCommandBlock extends BlockContainer
  {
-     private static final String __OBFID = "CL_00000219";
-@@ -31,13 +33,20 @@
+@@ -31,13 +32,20 @@
              boolean flag = p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_, p_149695_4_);
              int l = p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_);
              boolean flag1 = (l & 1) != 0;

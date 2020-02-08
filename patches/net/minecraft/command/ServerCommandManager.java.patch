@@ -39,7 +39,7 @@
 -        this.registerCommand(new CommandMessageRaw());
 +        */
 +        // Cauldron start - add permission nodes for rest of vanilla commands
-+        this.registerCommand("vanilla.command", new CommandDebug());
++        //this.registerCommand("vanilla.command", new CommandDebug());
 +        this.registerCommand("vanilla.command", new CommandSpreadPlayers());
 +        this.registerCommand("vanilla.command", new CommandPlaySound());
 +        this.registerCommand("vanilla.command", new CommandScoreboard());
