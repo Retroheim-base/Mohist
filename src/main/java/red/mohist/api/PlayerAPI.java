@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerAPI {
 
-    public static Map<EntityPlayerMP, Integer> mods = new ConcurrentHashMap<EntityPlayerMP, Integer>();
+    public static Map<EntityPlayerMP, Integer> mods = new ConcurrentHashMap<>();
     public static Map<EntityPlayerMP, String> modlist = new ConcurrentHashMap<EntityPlayerMP, String>();
 
     /**
