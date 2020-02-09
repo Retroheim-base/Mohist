@@ -252,7 +252,7 @@
          this.netManager.disableAutoRead();
      }
  
-@@ -180,8 +223,18 @@
+@@ -180,12 +223,22 @@
          this.playerEntity.setEntityActionState(p_147358_1_.func_149620_c(), p_147358_1_.func_149616_d(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
      }
  
@@ -270,6 +270,11 @@
 +        // CraftBukkit end
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
          this.field_147366_g = true;
+ 
+-        if (!this.playerEntity.playerConqueredTheEnd)
++        if (!this.playerEntity.playerConqueredTheEnd && !this.playerEntity.isDead) // CraftBukkit - Ignore movement packets from dead players.
+         {
+             double d0;
  
 @@ -199,8 +252,75 @@
                  }
@@ -1990,16 +1995,15 @@
          }
      }
  
-@@ -1292,6 +2604,21 @@
+@@ -1292,6 +2604,20 @@
          }
      }
  
 +    // CraftBukkit start - Add "isDisconnected" method
-+    public final boolean isDisconnected()
++    public boolean isDisconnected()
 +    {
 +        return !this.netManager.channel().config().isAutoRead();
 +    }
-+
 +    // CraftBukkit end
 +
 +    // Cauldron start

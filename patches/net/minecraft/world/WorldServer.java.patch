@@ -311,7 +311,7 @@
              return false;
          }
          else
-@@ -302,15 +444,29 @@
+@@ -302,18 +444,33 @@
          super.func_147456_g();
          int i = 0;
          int j = 0;
@@ -347,7 +347,11 @@
              this.func_147467_a(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
              chunk.func_150804_b(false);
-@@ -346,12 +502,32 @@
++            if (!chunk.areNeighborsLoaded(1)) continue; // Spigot - Don't tick blocks if neighbor chunks aren't loaded
+             this.theProfiler.endStartSection("thunder");
+             int i1;
+             int j1;
+@@ -346,12 +503,32 @@
  
                  if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
                  {
@@ -382,7 +386,7 @@
                  }
  
                  if (this.isRaining())
-@@ -388,6 +564,7 @@
+@@ -388,6 +565,7 @@
                          if (block.getTickRandomly())
                          {
                              ++i;
@@ -390,7 +394,7 @@
                              block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, this.rand);
                          }
                      }
-@@ -396,6 +573,13 @@
+@@ -396,6 +574,13 @@
  
              this.theProfiler.endSection();
          }
@@ -404,7 +408,7 @@
      }
  
      public boolean isBlockTickScheduledThisTick(int p_147477_1_, int p_147477_2_, int p_147477_3_, Block p_147477_4_)
-@@ -427,7 +611,7 @@
+@@ -427,7 +612,7 @@
                  {
                      Block block1 = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
  
@@ -413,7 +417,7 @@
                      {
                          block1.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
                      }
-@@ -474,7 +658,7 @@
+@@ -474,7 +659,7 @@
  
      public void updateEntities()
      {
@@ -422,7 +426,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -487,6 +671,7 @@
+@@ -487,6 +672,7 @@
          }
  
          super.updateEntities();
@@ -430,7 +434,7 @@
      }
  
      public void resetUpdateEntityTick()
-@@ -494,19 +679,60 @@
+@@ -494,19 +680,60 @@
          this.updateEntityTick = 0;
      }
  
@@ -496,7 +500,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -577,17 +803,15 @@
+@@ -577,17 +804,15 @@
  
              this.theProfiler.endSection();
              this.pendingTickListEntriesThisTick.clear();
@@ -519,7 +523,7 @@
          int l = k + 16 + 2;
  
          for (int i1 = 0; i1 < 2; ++i1)
-@@ -617,19 +841,24 @@
+@@ -617,19 +842,24 @@
                      if (p_72920_2_)
                      {
                          this.pendingTickListEntriesHashSet.remove(nextticklistentry);
@@ -546,7 +550,7 @@
          return arraylist;
      }
  
-@@ -651,7 +880,37 @@
+@@ -651,7 +881,37 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -585,7 +589,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -659,29 +918,31 @@
+@@ -659,29 +919,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -632,7 +636,7 @@
          return arraylist;
      }
  
-@@ -704,7 +965,7 @@
+@@ -704,7 +966,7 @@
  
          if (this.pendingTickListEntriesHashSet == null)
          {
@@ -641,7 +645,7 @@
          }
  
          if (this.pendingTickListEntriesTreeSet == null)
-@@ -733,7 +994,28 @@
+@@ -733,7 +995,28 @@
              int i = 0;
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
@@ -670,7 +674,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.chunkPosX;
-@@ -876,6 +1158,20 @@
+@@ -876,6 +1159,20 @@
  
      public boolean addWeatherEffect(Entity p_72942_1_)
      {
@@ -691,7 +695,7 @@
          if (super.addWeatherEffect(p_72942_1_))
          {
              this.mcServer.getConfigurationManager().sendToAllNear(p_72942_1_.posX, p_72942_1_.posY, p_72942_1_.posZ, 512.0D, this.provider.dimensionId, new S2CPacketSpawnGlobalEntity(p_72942_1_));
-@@ -894,13 +1190,24 @@
+@@ -894,13 +1191,24 @@
  
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -717,7 +721,7 @@
          if (!p_72885_10_)
          {
              explosion.affectedBlockPositions.clear();
-@@ -977,7 +1284,8 @@
+@@ -977,7 +1285,8 @@
      {
          boolean flag = this.isRaining();
          super.updateWeather();
@@ -727,7 +731,7 @@
          if (this.prevRainingStrength != this.rainingStrength)
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-@@ -987,11 +1295,9 @@
+@@ -987,11 +1296,9 @@
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -741,7 +745,7 @@
          if (flag != this.isRaining())
          {
              if (flag)
-@@ -1006,6 +1312,33 @@
+@@ -1006,6 +1313,33 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -775,7 +779,7 @@
      }
  
      protected int func_152379_p()
-@@ -1069,4 +1402,53 @@
+@@ -1069,4 +1403,53 @@
                  this();
              }
          }

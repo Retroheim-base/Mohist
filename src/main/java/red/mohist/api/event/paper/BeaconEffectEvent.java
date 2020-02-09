@@ -1,8 +1,4 @@
-package thermos.event;
-/**
- * Add new event from PaperSpigot, BeaconEffectEvent.
- * Called when an effect is being applied to a player.
- */
+package red.mohist.api.event.paper;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -11,6 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.potion.PotionEffect;
 
+/**
+ * Called when a beacon effect is being applied to a player.
+ */
 public class BeaconEffectEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;

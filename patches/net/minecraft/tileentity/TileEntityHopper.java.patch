@@ -244,3 +244,13 @@
              ItemStack itemstack = p_145898_1_.getEntityItem().copy();
              ItemStack itemstack1 = func_145889_a(p_145898_0_, itemstack, -1);
  
+@@ -522,7 +695,9 @@
+                 int max = Math.min(p_145899_1_.getMaxStackSize(), p_145899_0_.getInventoryStackLimit());
+                 if (max >= p_145899_1_.stackSize)
+                 {
++                    IGNORE_TILE_UPDATES = true; // Paper
+                     p_145899_0_.setInventorySlotContents(p_145899_2_, p_145899_1_);
++                    IGNORE_TILE_UPDATES = false; // Paper
+                     p_145899_1_ = null;
+                 }
+                 else

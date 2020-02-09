@@ -15,7 +15,7 @@
  public class MapData extends WorldSavedData
  {
      public int xCenter;
-@@ -21,14 +29,24 @@
+@@ -21,14 +29,27 @@
      public int dimension;
      public byte scale;
      public byte[] colors = new byte[16384];
@@ -25,6 +25,8 @@
 +    public List<MapInfo> playersArrayList = new ArrayList<MapInfo>(); // Spigot
 +    private Map<EntityPlayer, MapInfo> playersHashMap = new HashMap<EntityPlayer, MapInfo>(); // Spigot
 +    public Map<java.util.UUID, MapCoord> playersVisibleOnMap = new LinkedHashMap<java.util.UUID, MapCoord>(); // Spigot
++
++    private org.bukkit.craftbukkit.map.RenderData vanillaRender = new org.bukkit.craftbukkit.map.RenderData(); // Paper
 +
 +    // CraftBukkit start
 +    public final CraftMapView mapView;
@@ -39,11 +41,20 @@
 +        // CraftBukkit start
 +        mapView = new CraftMapView(this);
 +        server = (CraftServer) org.bukkit.Bukkit.getServer();
++        vanillaRender.buffer = colors; // Paper
 +        // CraftBukkit end
      }
  
      public void readFromNBT(NBTTagCompound p_76184_1_)
-@@ -107,14 +125,14 @@
+@@ -89,6 +110,7 @@
+                     }
+                 }
+             }
++            vanillaRender.buffer = colors; // Paper
+         }
+     }
+ 
+@@ -107,14 +129,14 @@
      {
          if (!this.playersHashMap.containsKey(p_76191_1_))
          {
@@ -60,7 +71,7 @@
          }
  
          for (int i = 0; i < this.playersArrayList.size(); ++i)
-@@ -125,7 +143,7 @@
+@@ -125,7 +147,7 @@
              {
                  if (!p_76191_2_.isOnItemFrame() && mapinfo1.entityplayerObj.dimension == this.dimension)
                  {
@@ -69,7 +80,7 @@
                  }
              }
              else
-@@ -137,11 +155,11 @@
+@@ -137,11 +159,11 @@
  
          if (p_76191_2_.isOnItemFrame())
          {
@@ -83,7 +94,7 @@
      {
          int j = 1 << this.scale;
          float f = (float)(p_82567_4_ - (double)this.xCenter) / (float)j;
-@@ -156,7 +174,7 @@
+@@ -156,7 +178,7 @@
              p_82567_8_ += p_82567_8_ < 0.0D ? -8.0D : 8.0D;
              b2 = (byte)((int)(p_82567_8_ * 16.0D / 360.0D));
  
@@ -92,7 +103,7 @@
              {
                  int k = (int)(p_82567_2_.getWorldInfo().getWorldTime() / 10L);
                  b2 = (byte)(k * k * 34187121 + k * 121 >> 15 & 15);
-@@ -250,7 +268,7 @@
+@@ -250,7 +272,7 @@
                  byte b3 = p_76192_1_[i * 3 + 2];
                  byte b0 = p_76192_1_[i * 3 + 3];
                  byte b1 = (byte)(p_76192_1_[i * 3 + 1] & 15);
@@ -101,7 +112,7 @@
              }
          }
          else if (p_76192_1_[0] == 2)
-@@ -265,7 +283,7 @@
+@@ -265,7 +287,7 @@
  
          if (mapinfo == null)
          {
@@ -110,7 +121,30 @@
              this.playersHashMap.put(p_82568_1_, mapinfo);
              this.playersArrayList.add(mapinfo);
          }
-@@ -300,10 +318,12 @@
+@@ -292,6 +314,22 @@
+ 
+     public class MapInfo
+     {
++        // Paper start
++        private void addSeenPlayers(java.util.Collection icons) {
++            org.bukkit.entity.Player player = (org.bukkit.entity.Player) entityplayerObj.getBukkitEntity();
++            mapDataObj.playersVisibleOnMap.forEach((uuid, mapIcon) -> {
++                // If this cursor is for a player check visibility with vanish system
++                org.bukkit.entity.Player other = org.bukkit.Bukkit.getPlayer((UUID) uuid); // Spigot
++                if (other == null || player.canSee(other)) {
++                    icons.add(mapIcon);
++                }
++            });
++        }
++
++        private boolean shouldUseVanillaMap() {
++            return mapDataObj.mapView.getRenderers().size() == 1 && mapDataObj.mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.map.CraftMapRenderer.class;
++        }
++	    // Paper stop
+         public final EntityPlayer entityplayerObj;
+         public int[] field_76209_b = new int[128];
+         public int[] field_76210_c = new int[128];
+@@ -300,10 +338,12 @@
          private byte[] lastPlayerLocationOnMap;
          public int field_82569_d;
          private boolean field_82570_i;
@@ -124,7 +158,7 @@
              this.entityplayerObj = p_i2138_2_;
  
              for (int i = 0; i < this.field_76209_b.length; ++i)
-@@ -328,20 +348,37 @@
+@@ -328,20 +368,37 @@
                  int i;
                  int i1;
  

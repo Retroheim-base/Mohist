@@ -12,21 +12,22 @@
  public class BlockNetherrack extends Block
  {
      private static final String __OBFID = "CL_00000275";
-@@ -18,4 +23,17 @@
+@@ -18,4 +23,18 @@
      {
          return MapColor.netherrackColor;
      }
 +
-+    // CraftBukkit start
++    // CraftBukkit start //PaperSpigot - Remove completely invalid Redstone event for Netherrack
 +    public void doPhysics(World world, int i, int j, int k, int l)
 +    {
-+        if (Block.getBlockById(l) != null && Block.getBlockById(l).canProvidePower())
++        /*if (Block.getBlockById(l) != null && Block.getBlockById(l).canProvidePower())
 +        {
 +            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
 +            int power = block.getBlockPower();
 +            BlockRedstoneEvent event = new BlockRedstoneEvent(block, power, power);
 +            world.getServer().getPluginManager().callEvent(event);
 +        }
++        */
 +    }
 +    // CraftBukkit end
  }

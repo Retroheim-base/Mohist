@@ -89,13 +89,16 @@
                  }
              }
          }
-@@ -113,21 +147,36 @@
+@@ -111,23 +145,39 @@
+             this.func_149811_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+         }
  
++        if (p_149674_1_.getType(p_149674_2_, p_149674_3_, p_149674_4_).getMaterial() != this.blockMaterial) { return; } // PaperSpigot - Stop updating flowing block if material has changed
++
          if (this.func_149809_q(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_))
          {
 -            if (this.blockMaterial == Material.lava && p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == Material.water)
-+            if (p_149674_1_.getType(p_149674_2_, p_149674_3_, p_149674_4_).getMaterial() != this.blockMaterial) { return; } // PaperSpigot - Stop updating flowing block if material has changed
-+
++            if (!canFlowTo(p_149674_1_, source, BlockFace.DOWN)) { return; } // Paper
 +            // CraftBukkit start - Send "down" to the server
 +            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
 +
@@ -136,7 +139,7 @@
          }
          else if (l >= 0 && (l == 0 || this.func_149807_p(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_)))
          {
-@@ -144,25 +193,31 @@
+@@ -144,25 +194,32 @@
                  return;
              }
  
@@ -155,6 +158,7 @@
 -            }
 +                if (aboolean[index])
 +                {
++                    if (!canFlowTo(p_149674_1_, source, currentFace)) { continue; } // Paper
 +                    BlockFromToEvent event = new BlockFromToEvent(source, currentFace);
  
 -            if (aboolean[2])
@@ -182,3 +186,14 @@
          }
      }
  
+@@ -351,4 +408,10 @@
+     {
+         return true;
+     }
++
++    // Paper start
++    private boolean canFlowTo(World world, org.bukkit.block.Block source, BlockFace face) {
++        return source.getWorld().isChunkLoaded((source.getX() + face.getModX()) >> 4, (source.getZ() + face.getModZ()) >> 4);
++    }
++    // Paper end
+ }

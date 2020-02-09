@@ -35,6 +35,15 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
+@@ -48,7 +60,7 @@
+             classToNameMap.put(p_145826_0_, p_145826_1_);
+         }
+     }
+-
++    static boolean IGNORE_TILE_UPDATES = false; // Paper
+     public World getWorldObj()
+     {
+         return this.worldObj;
 @@ -106,7 +118,11 @@
          }
          catch (Exception exception)
@@ -48,7 +57,15 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +298,31 @@
+@@ -145,6 +161,7 @@
+     {
+         if (this.worldObj != null)
+         {
++            if (IGNORE_TILE_UPDATES) return; // Paper
+             this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
+             this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
+ 
+@@ -282,6 +299,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  

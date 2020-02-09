@@ -10,7 +10,7 @@
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
 +import org.bukkit.potion.PotionEffectType;
-+import thermos.event.BeaconEffectEvent;
++import red.mohist.api.event.paper.BeaconEffectEvent;
 +// CraftBukkit end
 +
  public class TileEntityBeacon extends TileEntity implements IInventory

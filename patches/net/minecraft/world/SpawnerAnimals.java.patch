@@ -33,10 +33,11 @@
                      {
                          boolean flag3 = l == -b0 || l == b0 || i1 == -b0 || i1 == b0;
 -                        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(l + j, i1 + k);
-+                        // CraftBukkit start
++                        // CraftBukkit start - use LongHash and LongObjectHashMap
 +                        long chunkCoords = LongHash.toLong(l + j, i1 + k);
  
-                         if (!flag3)
+-                        if (!flag3)
++                        if (!flag3 && p_77192_1_.chunkExists((i1 + l) >> 4, (k + j) >> 4)) // Migot - Prevent Creature Spawning in Unloaded Chunks
                          {
 -                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.valueOf(false));
 +                            this.eligibleChunksForSpawning.put(chunkCoords, false);

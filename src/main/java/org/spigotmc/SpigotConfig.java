@@ -282,4 +282,10 @@ public class SpigotConfig
         return config;
     }
     //thermos end
+
+    public static boolean silentCommandBlocks;
+    private static void silentCommandBlocks()
+    {
+        silentCommandBlocks = getBoolean( "commands.silent-commandblock-console", false );
+    }
 }

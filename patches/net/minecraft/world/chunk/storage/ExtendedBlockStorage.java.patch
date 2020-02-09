@@ -42,7 +42,18 @@
          return Block.getBlockById(l);
      }
  
-@@ -139,6 +166,106 @@
+@@ -104,7 +131,9 @@
+ 
+     public boolean isEmpty()
+     {
+-        return this.blockRefCount == 0;
++        // Paper - MC-80966
++        // Even if there are no blocks, there may be other information associated with the chunk, always send it.
++        return false;
+     }
+ 
+     public boolean getNeedsRandomTick()
+@@ -139,6 +168,106 @@
  
      public void removeInvalidBlocks()
      {
@@ -149,7 +160,7 @@
          this.blockRefCount = 0;
          this.tickRefCount = 0;
  
-@@ -175,51 +302,112 @@
+@@ -175,51 +304,112 @@
          this.blockMSBArray = null;
      }
  

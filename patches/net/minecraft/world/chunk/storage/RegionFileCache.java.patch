@@ -1,12 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
-@@ -10,70 +10,105 @@
+@@ -6,74 +6,95 @@
+ import java.io.IOException;
+ import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.LinkedHashMap;
+ import java.util.Map;
  
  public class RegionFileCache
  {
 -    private static final Map regionsByFilename = new HashMap();
 -    private static final String __OBFID = "CL_00000383";
-+	public static final Map<File,RegionFile> regionsByFilename = new HashMap<File,RegionFile>(); // CraftBukkit - private -> public
++	public static final Map<File,RegionFile> regionsByFilename = new LinkedHashMap(256, 0.75f, true); // Spigot - private -> public, Paper - HashMap -> LinkedHashMap
 +	private static final String __OBFID = "CL_00000383";
  
 -    public static synchronized RegionFile createOrLoadRegionFile(File p_76550_0_, int p_76550_1_, int p_76550_2_)
@@ -50,9 +55,8 @@
 -            {
 -                clearRegionFileReferences();
 -            }
-+			if (regionsByFilename.size() >= 256)
-+			{
-+				deleteOldestReference();
++			if (RegionFileCache.regionsByFilename.size() >= 256) { // Paper
++				trimCache(); // Paper
 +			}
  
 -            RegionFile regionfile1 = new RegionFile(file3);
@@ -65,50 +69,32 @@
 +			return regionfile1;
 +		}
 +	}
-+	// Thermos a kinda-copy of the method below, except here we delete the oldest stream rather than deleting all filestreams
-+	// This is a key part of ensuring that the chunk existence thread can complete its necessary tasks
-+	public static synchronized void deleteOldestReference()
-+	{
-+		long oldest = System.currentTimeMillis();
-+		File toJunk = null;
-+		for (Map.Entry<File,RegionFile> entry : regionsByFilename.entrySet())
-+		{
-+			if(entry.getKey().lastModified() < oldest)
-+			{
-+				oldest = entry.getKey().lastModified();
-+				toJunk = entry.getKey();
-+			}
-+		}
-+		if(toJunk != null)
-+		{
-+			try
-+			{
-+				regionsByFilename.remove(toJunk).close();
-+			}
-+			catch(IOException e)
-+			{
-+				e.printStackTrace();
-+			}
-+		}
-+		else // Default to usual behavior if this fails
-+		{
-+			clearRegionFileReferences();
-+		}
-+	}
  
 -    public static synchronized void clearRegionFileReferences()
 -    {
 -        Iterator iterator = regionsByFilename.values().iterator();
-+	public static synchronized void clearRegionFileReferences()
-+	{
-+		Iterator iterator = regionsByFilename.values().iterator();
++	// Paper Start
++	private static synchronized void trimCache() {
++		Iterator<Map.Entry<File, RegionFile>> itr = RegionFileCache.regionsByFilename.entrySet().iterator();
++		int count = RegionFileCache.regionsByFilename.size() - 256;
++		while (count-- >= 0 && itr.hasNext()) {
++			try {
++				itr.next().getValue().close();
++			} catch (IOException ioexception) {
++				ioexception.printStackTrace();
++				// ServerInternalException.reportInternalException(ioexception);
++			}
++			itr.remove();
++		}
++	}
++	// Paper End
  
 -        while (iterator.hasNext())
 -        {
 -            RegionFile regionfile = (RegionFile)iterator.next();
-+		while (iterator.hasNext())
-+		{
-+			RegionFile regionfile = (RegionFile)iterator.next();
++	public static synchronized void clearRegionFileReferences()
++	{
++		Iterator iterator = regionsByFilename.values().iterator();
  
 -            try
 -            {
@@ -122,6 +108,12 @@
 -                ioexception.printStackTrace();
 -            }
 -        }
++		while (iterator.hasNext())
++		{
++			RegionFile regionfile = (RegionFile)iterator.next();
+ 
+-        regionsByFilename.clear();
+-    }
 +			try
 +			{
 +				if (regionfile != null)
@@ -135,20 +127,12 @@
 +			}
 +		}
  
--        regionsByFilename.clear();
--    }
-+		regionsByFilename.clear();
-+	}
- 
 -    public static DataInputStream getChunkInputStream(File p_76549_0_, int p_76549_1_, int p_76549_2_)
 -    {
 -        RegionFile regionfile = createOrLoadRegionFile(p_76549_0_, p_76549_1_, p_76549_2_);
 -        return regionfile.getChunkDataInputStream(p_76549_1_ & 31, p_76549_2_ & 31);
 -    }
-+	public static DataInputStream getChunkInputStream(File p_76549_0_, int p_76549_1_, int p_76549_2_)
-+	{
-+		RegionFile regionfile = createOrLoadRegionFile(p_76549_0_, p_76549_1_, p_76549_2_);
-+		return regionfile.getChunkDataInputStream(p_76549_1_ & 31, p_76549_2_ & 31);
++		regionsByFilename.clear();
 +	}
  
 -    public static DataOutputStream getChunkOutputStream(File p_76552_0_, int p_76552_1_, int p_76552_2_)
@@ -156,6 +140,12 @@
 -        RegionFile regionfile = createOrLoadRegionFile(p_76552_0_, p_76552_1_, p_76552_2_);
 -        return regionfile.getChunkDataOutputStream(p_76552_1_ & 31, p_76552_2_ & 31);
 -    }
++	public static DataInputStream getChunkInputStream(File p_76549_0_, int p_76549_1_, int p_76549_2_)
++	{
++		RegionFile regionfile = createOrLoadRegionFile(p_76549_0_, p_76549_1_, p_76549_2_);
++		return regionfile.getChunkDataInputStream(p_76549_1_ & 31, p_76549_2_ & 31);
++	}
++
 +	public static DataOutputStream getChunkOutputStream(File p_76552_0_, int p_76552_1_, int p_76552_2_)
 +	{
 +		RegionFile regionfile = createOrLoadRegionFile(p_76552_0_, p_76552_1_, p_76552_2_);

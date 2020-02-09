@@ -21,13 +21,13 @@
          }
  
 -        if (this.myEntity instanceof EntityItemFrame && this.ticks % 10 == 0)
-+        if (this.myEntity instanceof EntityItemFrame /*&& this.ticks % 10 == 0*/)   // CraftBukkit - Moved below, should always enter this block
++        if (this.myEntity instanceof EntityItemFrame && this.ticks % 10 == 0)   // CraftBukkit - Moved below, should always enter this block
          {
              EntityItemFrame entityitemframe = (EntityItemFrame)this.myEntity;
              ItemStack itemstack = entityitemframe.getDisplayedItem();
  
 -            if (itemstack != null && itemstack.getItem() instanceof ItemMap)
-+            if (this.ticks % 10 == 0 && itemstack != null && itemstack.getItem() instanceof ItemMap)   // CraftBukkit - Moved this.m % 10 logic here so item frames do not enter the other blocks
++            if (itemstack != null && itemstack.getItem() instanceof ItemMap)   // CraftBukkit - Moved this.m % 10 logic here so item frames do not enter the other blocks
              {
                  MapData mapdata = Items.filled_map.getMapData(itemstack, this.myEntity.worldObj);
 -                Iterator iterator = p_73122_1_.iterator();
