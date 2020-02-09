@@ -121,10 +121,11 @@
              this.playersHashMap.put(p_82568_1_, mapinfo);
              this.playersArrayList.add(mapinfo);
          }
-@@ -292,6 +314,22 @@
+@@ -292,6 +314,24 @@
  
      public class MapInfo
      {
++        /*
 +        // Paper start
 +        private void addSeenPlayers(java.util.Collection icons) {
 +            org.bukkit.entity.Player player = (org.bukkit.entity.Player) entityplayerObj.getBukkitEntity();
@@ -141,10 +142,11 @@
 +            return mapDataObj.mapView.getRenderers().size() == 1 && mapDataObj.mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.map.CraftMapRenderer.class;
 +        }
 +	    // Paper stop
++        */
          public final EntityPlayer entityplayerObj;
          public int[] field_76209_b = new int[128];
          public int[] field_76210_c = new int[128];
-@@ -300,10 +338,12 @@
+@@ -300,10 +340,12 @@
          private byte[] lastPlayerLocationOnMap;
          public int field_82569_d;
          private boolean field_82570_i;
@@ -158,7 +160,7 @@
              this.entityplayerObj = p_i2138_2_;
  
              for (int i = 0; i < this.field_76209_b.length; ++i)
-@@ -328,20 +368,37 @@
+@@ -328,20 +370,37 @@
                  int i;
                  int i1;
  
