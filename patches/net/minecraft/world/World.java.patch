@@ -763,7 +763,7 @@
                  return chunk.getSavedLightValue(p_72972_1_, p_72972_2_ & 15, p_72972_3_, p_72972_4_ & 15);
              }
          }
-@@ -1304,9 +1755,24 @@
+@@ -1304,11 +1755,26 @@
          this.weatherEffects.add(p_72942_1_);
          return true;
      }
@@ -785,10 +785,13 @@
 +
 +    public boolean addEntity(Entity p_72838_1_, SpawnReason spawnReason) // Changed signature, added SpawnReason
 +    {
-+        if (!p_72838_1_.entityAllowedToSpawn()) return false; // Cauldron
++        if (p_72838_1_ == null || !p_72838_1_.entityAllowedToSpawn()) return false; // Cauldron
          // do not drop any items while restoring blocksnapshots. Prevents dupes
-         if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
+-        if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
++        if (!this.isRemote && ((p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
  
+         int i = MathHelper.floor_double(p_72838_1_.posX / 16.0D);
+         int j = MathHelper.floor_double(p_72838_1_.posZ / 16.0D);
 @@ -1319,23 +1785,99 @@
              flag = true;
          }
@@ -1242,7 +1245,7 @@
 -        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
 +        ChunkCoordIntPair cp = new ChunkCoordIntPair(i >> 4, j >> 4);
 +        boolean isForced = this.activity.containsKey(cp) || getPersistentChunks().containsKey(cp);
-+//        byte b0 = isForced ? (byte)0 : 32; Thermos - this B ded
++        // byte b0 = isForced ? (byte)0 : 32; Thermos - this B ded
 +        // CraftBukkit start - Use neighbor cache instead of looking up
 +        Chunk startingChunk = this.getChunkIfLoaded(i >> 4, j >> 4);
 +        boolean canUpdate = !p_72866_2_ || (startingChunk != null && (isForced || startingChunk.areNeighborsLoaded(2)));
