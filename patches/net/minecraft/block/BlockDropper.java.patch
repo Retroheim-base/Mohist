@@ -57,3 +57,12 @@
                          itemstack1 = itemstack.copy();
  
                          if (--itemstack1.stackSize == 0)
+@@ -80,7 +108,7 @@
+                 {
+                     itemstack1 = this.field_149947_P.dispense(blocksourceimpl, itemstack);
+ 
+-                    if (itemstack1 != null && itemstack1.stackSize == 0)
++                    if (itemstack1 != null && itemstack1.stackSize <= 0)
+                     {
+                         itemstack1 = null;
+                     }
