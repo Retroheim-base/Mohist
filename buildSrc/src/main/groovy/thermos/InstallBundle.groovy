@@ -32,30 +32,6 @@ class InstallBundle extends DefaultTask {
     def install() {
         installLocation.deleteDir()
         installLocation.mkdirs()
-        new File(installLocation, "README.txt").withWriter {
-            def String jarPath = 'bin/ca/tcpr/Thermos/' << project.version << File.separator << 'Thermos-' << project.version << '.jar'
-
-            it << '''Thermos installation guide
-
-# This is Thermos from https://github.com/TCPR/Thermos
-
-# Installation and usage
-1. Unpack this zip into server directory
-2. Use following line to start the server:
-  java -Xmx1024M -jar '''
-            it << jarPath
-            it << '''
-
-  or
-
-  java -Xmx1024M -jar Thermos.jar
-
-3. Enjoy
-
-Public builds can be found at: https://tcpr.ca/downloads/thermos
-
-'''
-        }
         def cp = bootstrapClasspath
         for (int i = 0; i < 3; i++) {
             def result = project.javaexec { it ->
