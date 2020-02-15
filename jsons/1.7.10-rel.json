@@ -163,7 +163,7 @@
       "serverreq":true
     },
     {
-      "name": "net.md-5:SpecialSource:1.7.4",
+      "name": "net.md-5:SpecialSource:1.7-SNAPSHOT",
       "url" : "https://hub.spigotmc.org/nexus/content/repositories/public",
       "serverreq":true
     },
