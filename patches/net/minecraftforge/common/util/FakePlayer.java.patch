@@ -27,7 +27,7 @@
  //Preliminary, simple Fake Player class 
  public class FakePlayer extends EntityPlayerMP
  {
-+    static public ArrayList<FakePlayer> fakePlayers=new ArrayList<>();
++    static public ArrayList<FakePlayer> fakePlayers=new ArrayList<FakePlayer>();
 +    static public boolean BukkitInited=false;
      public FakePlayer(WorldServer world, GameProfile name)
      {

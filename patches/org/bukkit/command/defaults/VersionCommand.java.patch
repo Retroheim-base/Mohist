@@ -16,7 +16,7 @@
          this.setAliases(Arrays.asList("ver", "about"));
      }
  
-+    public Map<String, String> a = new ConcurrentHashMap<>();
++    public Map<String, String> a = new ConcurrentHashMap<String, String>();
 +
      @Override
      public boolean execute(CommandSender sender, String currentAlias, String[] args) {
