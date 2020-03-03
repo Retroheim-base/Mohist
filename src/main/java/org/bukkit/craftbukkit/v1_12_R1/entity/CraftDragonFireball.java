@@ -11,11 +11,6 @@ public class CraftDragonFireball extends CraftFireball implements DragonFireball
     }
 
     @Override
-    public String toString() {
-        return "CraftDragonFireball";
-    }
-
-    @Override
     public EntityType getType() {
         return EntityType.DRAGON_FIREBALL;
     }

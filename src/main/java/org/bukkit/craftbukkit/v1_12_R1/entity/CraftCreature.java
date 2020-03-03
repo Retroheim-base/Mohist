@@ -34,6 +34,6 @@ public class CraftCreature extends CraftLivingEntity implements Creature {
 
     @Override
     public String toString() {
-        return "CraftCreature{name=" + this.entityName + "}";
+        return "CraftCreature";
     }
 }

@@ -17,7 +17,7 @@ public class CraftAmbient extends CraftLivingEntity implements Ambient {
 
     @Override
     public String toString() {
-        return "CraftAmbient{name=" + this.entityName + "}";
+        return "CraftAmbient";
     }
 
     public EntityType getType() {
