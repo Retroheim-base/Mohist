@@ -20,7 +20,7 @@
      private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
 +    // Paper start
 +    protected Chunk lastChunkByPos = null;
-+    public Long2ObjectOpenHashMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192) {
++    public Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192) {
  
 +        @Override
 +        public Chunk get (long key) {
