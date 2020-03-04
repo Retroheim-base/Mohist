@@ -31,7 +31,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.FileUtil;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 import red.mohist.util.i18n.Message;
 
 /**
@@ -67,7 +67,6 @@ public final class SimplePluginManager implements PluginManager {
      */
     public void registerInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
         PluginLoader instance;
-
         if (PluginLoader.class.isAssignableFrom(loader)) {
             Constructor<? extends PluginLoader> constructor;
 
@@ -135,14 +134,14 @@ public final class SimplePluginManager implements PluginManager {
                 description = loader.getPluginDescription(file);
                 String name = description.getName();
                 if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang") || name.equalsIgnoreCase("spigot") || name.equalsIgnoreCase("forge") || name.equalsIgnoreCase("paper") || name.equalsIgnoreCase("mohist")) {
-                    Mohist.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
+                    MohistLog.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
                     continue;
                 } else if (description.rawName.indexOf(' ') != -1) {
-                    Mohist.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': uses the space-character (0x20) in its name");
+                    MohistLog.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': uses the space-character (0x20) in its name");
                     continue;
                 }
             } catch (InvalidDescriptionException ex) {
-                Mohist.LOGGER.error(Message.getFormatString("exception.invalid.description", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
+                MohistLog.LOGGER.error(Message.getFormatString("exception.invalid.description", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
                 continue;
             }
 
@@ -246,7 +245,7 @@ public final class SimplePluginManager implements PluginManager {
                         loadedPlugins.add(plugin);
                         continue;
                     } catch (InvalidPluginException ex) {
-                        Mohist.LOGGER.error(Message.getFormatString("exception.invalid.plugin", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
+                        MohistLog.LOGGER.error(Message.getFormatString("exception.invalid.plugin", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
                     }
                 }
             }
@@ -271,7 +270,7 @@ public final class SimplePluginManager implements PluginManager {
                             loadedPlugins.add(plugin);
                             break;
                         } catch (InvalidPluginException ex) {
-                            Mohist.LOGGER.error(Message.getFormatString("exception.invalid.description", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
+                            MohistLog.LOGGER.error(Message.getFormatString("exception.invalid.description", new Object[]{file.getPath(), directory.getPath()}), ex);//by: lliiooll
                         }
                     }
                 }
@@ -284,7 +283,7 @@ public final class SimplePluginManager implements PluginManager {
                     while (failedPluginIterator.hasNext()) {
                         File file = failedPluginIterator.next();
                         failedPluginIterator.remove();
-                        Mohist.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': circular dependency detected");
+                        MohistLog.LOGGER.error("Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': circular dependency detected");
                     }
                 }
             }
@@ -488,7 +487,7 @@ public final class SimplePluginManager implements PluginManager {
                 if (plugin.isNaggable()) {
                     plugin.setNaggable(false);
 
-                    Mohist.LOGGER.error(String.format(
+                    MohistLog.LOGGER.error(String.format(
                             "Nag author(s): '%s' of '%s' about the following: %s",
                             plugin.getDescription().getAuthors(),
                             plugin.getDescription().getFullName(),

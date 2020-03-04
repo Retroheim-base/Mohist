@@ -41,7 +41,7 @@
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.spigotmc.SpigotConfig;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.common.async.MohistThreadBox;
 +import red.mohist.configuration.MohistConfig;
 +import red.mohist.api.event.server.BukkitServerStartDoneEvent;
@@ -133,7 +133,7 @@
          thread.setDaemon(true);
          thread.start();
 -        LOGGER.info("Starting minecraft server version 1.12.2");
-+        Mohist.LOGGER.info(Message.getString("mohist.server.start"));
++        MohistLog.LOGGER.info(Message.getString("mohist.server.start"));
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
          {
@@ -177,7 +177,7 @@
              this.setKeyPair(CryptManager.generateKeyPair());
 -            LOGGER.info("Starting Minecraft server on {}:{}", this.getServerHostname().isEmpty() ? "*" : this.getServerHostname(), Integer.valueOf(this.getServerPort()));
 +            Object[] p = {this.getServerHostname().isEmpty() ? "0.0.0.0" : this.getServerHostname(), String.valueOf(this.getServerPort())};
-+            Mohist.LOGGER.info(Message.getFormatString("server.ip", p));
++            MohistLog.LOGGER.info(Message.getFormatString("server.ip", p));
  
 +		if(!SpigotConfig.lateBind) {
              try
@@ -216,14 +216,14 @@
 -                LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
 -                this.currentTime = getCurrentTimeMillis();
 +                if (MohistConfig.instance.support_nocmd.getValue()) {
-+                    Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
++                    MohistLog.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
 +                } else {
-+                    Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
++                    MohistLog.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
 +                }
  
 +                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
 +                Object[] p1 = {this.getServerHostname().isEmpty() ? "0.0.0.0" : this.getServerHostname(), String.valueOf(this.getServerPort())};
-+                Mohist.LOGGER.info(Message.getFormatString("server.ip", p1));
++                MohistLog.LOGGER.info(Message.getFormatString("server.ip", p1));
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");

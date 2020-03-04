@@ -25,7 +25,7 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 
 public class SpigotConfig {
 
@@ -221,7 +221,7 @@ public class SpigotConfig {
         for (String name : section.getKeys(true)) {
             if (section.isInt(name)) {
                 if (StatList.getOneShotStat(name) == null) {
-                    Mohist.LOGGER.warn("Ignoring non existent stats.forced-stats " + name);
+                    MohistLog.LOGGER.warn("Ignoring non existent stats.forced-stats " + name);
                     continue;
                 }
                 forcedStats.put(name, section.getInt(name));

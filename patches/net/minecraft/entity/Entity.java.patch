@@ -56,7 +56,7 @@
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
 +import org.spigotmc.CustomTimingsHandler;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.common.RealTimeTicking;
  
  public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
@@ -207,7 +207,7 @@
 +
 +        if (yaw == Float.POSITIVE_INFINITY || yaw == Float.NEGATIVE_INFINITY) {
 +            if (this instanceof EntityPlayerMP) {
-+                Mohist.LOGGER.warn(this.getName() + " was caught trying to crash the server with an invalid yaw");
++                MohistLog.LOGGER.warn(this.getName() + " was caught trying to crash the server with an invalid yaw");
 +                ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
 +            }
 +            yaw = 0;
@@ -220,7 +220,7 @@
 +
 +        if (pitch == Float.POSITIVE_INFINITY || pitch == Float.NEGATIVE_INFINITY) {
 +            if (this instanceof EntityPlayerMP) {
-+                Mohist.LOGGER.warn(this.getName() + " was caught trying to crash the server with an invalid pitch");
++                MohistLog.LOGGER.warn(this.getName() + " was caught trying to crash the server with an invalid pitch");
 +                ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
 +            }
 +            pitch = 0;

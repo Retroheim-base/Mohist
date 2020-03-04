@@ -66,7 +66,7 @@
 +import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 +import org.bukkit.util.Vector;
 +import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.util.i18n.Message;
  
  public abstract class PlayerList

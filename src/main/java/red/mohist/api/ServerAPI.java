@@ -1,9 +1,9 @@
 package red.mohist.api;
 
-import io.netty.util.internal.ConcurrentSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -11,11 +11,11 @@ import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 
-    public static Map<String, Integer> mods = new ConcurrentHashMap();
-    public static Set<String> modlists = new ConcurrentSet();
-    public static Map<String, Integer> injectmaterials = new ConcurrentHashMap();
-    public static Map<String, Integer> injectblock = new ConcurrentHashMap();
-    public static Map<String, String> forgecmdper = new ConcurrentHashMap();
+    public static Map<String, Integer> mods = Maps.newHashMap();
+    public static HashSet<String> modlists = Sets.newHashSet();
+    public static Map<String, Integer> injectmaterials = Maps.newHashMap();
+    public static Map<String, Integer> injectblock = Maps.newHashMap();
+    public static Map<String, String> forgecmdper = Maps.newHashMap();
 
     // Don't count the default number of mods
     public static int getModSize() {

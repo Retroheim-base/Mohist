@@ -45,7 +45,6 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
-import red.mohist.Mohist;
 
 /**
  * Represents the Bukkit core, for version and Server singleton handling
@@ -81,7 +80,6 @@ public final class Bukkit {
         }
 
         Bukkit.server = server;
-        Mohist.LOGGER.info("This server is running " + getName() + " version " + getVersion() + " (Implementing API version " + getBukkitVersion() + ")");
     }
 
     /**

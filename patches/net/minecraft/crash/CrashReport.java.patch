@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -21,13 +21,16 @@
+@@ -21,13 +21,15 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.Bukkit;
 +import red.mohist.Mohist;
 +import red.mohist.util.i18n.Message;
  
@@ -18,7 +17,7 @@
      private final List<CrashReportCategory> crashReportSections = Lists.<CrashReportCategory>newArrayList();
      private File crashReportFile;
      private boolean firstCategoryInCrashReport = true;
-@@ -42,35 +45,35 @@
+@@ -42,35 +44,35 @@
  
      private void populateEnvironment()
      {
@@ -61,7 +60,7 @@
          {
              public String call()
              {
-@@ -84,7 +87,7 @@
+@@ -84,7 +86,7 @@
                  return k + " bytes (" + j1 + " MB) / " + j + " bytes (" + i1 + " MB) up to " + i + " bytes (" + l + " MB)";
              }
          });
@@ -70,7 +69,7 @@
          {
              public String call()
              {
-@@ -109,13 +112,14 @@
+@@ -109,13 +111,14 @@
                  return String.format("%d total; %s", i, stringbuilder.toString());
              }
          });
@@ -86,7 +85,7 @@
          net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
      }
  
-@@ -138,9 +142,9 @@
+@@ -138,9 +141,9 @@
  
          if (this.stacktrace != null && this.stacktrace.length > 0)
          {
@@ -99,7 +98,7 @@
  
              for (StackTraceElement stacktraceelement : this.stacktrace)
              {
-@@ -205,19 +209,17 @@
+@@ -205,19 +208,17 @@
      public String getCompleteReport()
      {
          StringBuilder stringbuilder = new StringBuilder();
@@ -123,7 +122,7 @@
  
          for (int i = 0; i < 87; ++i)
          {
-@@ -261,7 +263,7 @@
+@@ -261,7 +262,7 @@
              }
              catch (Throwable throwable)
              {
@@ -132,7 +131,7 @@
                  flag1 = false;
              }
              finally
-@@ -332,20 +334,6 @@
+@@ -332,20 +333,6 @@
          return crashreportcategory;
      }
  

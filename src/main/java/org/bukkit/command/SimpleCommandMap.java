@@ -20,7 +20,7 @@ import org.bukkit.command.defaults.TimingsCommand;
 import org.bukkit.command.defaults.VersionCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 
 public class SimpleCommandMap implements CommandMap {
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
@@ -233,7 +233,7 @@ public class SimpleCommandMap implements CommandMap {
         for (Map.Entry<String, String[]> entry : values.entrySet()) {
             String alias = entry.getKey();
             if (alias.contains(" ")) {
-                Mohist.LOGGER.warn("Could not register alias " + alias + " because it contains illegal characters");
+                MohistLog.LOGGER.warn("Could not register alias " + alias + " because it contains illegal characters");
                 continue;
             }
 
@@ -256,7 +256,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                Mohist.LOGGER.warn("Could not register alias " + alias + " because it contains commands that do not exist: " + bad);
+                MohistLog.LOGGER.warn("Could not register alias " + alias + " because it contains commands that do not exist: " + bad);
                 continue;
             }
 

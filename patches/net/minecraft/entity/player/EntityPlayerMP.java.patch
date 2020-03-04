@@ -68,7 +68,7 @@
 +import org.bukkit.event.player.PlayerLocaleChangeEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.inventory.MainHand;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.common.RealTimeTicking;
  
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
@@ -666,7 +666,7 @@
          for (ResourceLocation resourcelocation : p_193102_1_)
          {
 +            if (CraftingManager.getRecipe(resourcelocation) == null) {
-+                Mohist.LOGGER.warn("Ignoring grant of non existent recipe " + resourcelocation);
++                MohistLog.LOGGER.warn("Ignoring grant of non existent recipe " + resourcelocation);
 +                continue;
 +            }
              list.add(CraftingManager.getRecipe(resourcelocation));

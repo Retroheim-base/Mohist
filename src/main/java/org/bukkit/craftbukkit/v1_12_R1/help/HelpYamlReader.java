@@ -11,7 +11,7 @@ import org.bukkit.Server;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.help.HelpTopic;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 
 /**
  * HelpYamlReader is responsible for processing the contents of the help.yml file.
@@ -38,10 +38,10 @@ public class HelpYamlReader {
                     helpYaml.save(helpYamlFile);
                 }
             } catch (IOException ex) {
-                Mohist.LOGGER.error("Could not save " + helpYamlFile, ex);
+                MohistLog.LOGGER.error("Could not save " + helpYamlFile, ex);
             }
         } catch (Exception ex) {
-            Mohist.LOGGER.error("Failed to load help.yml. Verify the yaml indentation is correct. Reverting to default help.yml.");
+            MohistLog.LOGGER.error("Failed to load help.yml. Verify the yaml indentation is correct. Reverting to default help.yml.");
             helpYaml = defaultConfig;
         }
     }

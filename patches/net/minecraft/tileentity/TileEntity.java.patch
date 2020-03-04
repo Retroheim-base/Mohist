@@ -21,7 +21,7 @@
 +import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 +import org.bukkit.inventory.InventoryHolder;
 +import org.spigotmc.CustomTimingsHandler;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
  
  public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
@@ -68,7 +68,7 @@
 +        // Spigot start
 +        org.bukkit.block.Block block = this.world.getWorld().getBlockAt(this.pos.getX(), this.pos.getY(), this.pos.getZ());
 +        if (block == null) {
-+            Mohist.LOGGER.warn("No block for owner at %s %d %d %d", new Object[] { this.world.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ() });
++            MohistLog.LOGGER.warn("No block for owner at %s %d %d %d", new Object[] { this.world.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ() });
 +            return null;
 +        }
 +        // Spigot end

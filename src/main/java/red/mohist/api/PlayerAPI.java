@@ -1,7 +1,7 @@
 package red.mohist.api;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 
 public class PlayerAPI {
 
-    public static Map<EntityPlayerMP, Integer> mods = new ConcurrentHashMap<>();
-    public static Map<EntityPlayerMP, String> modlist = new ConcurrentHashMap<>();
+    public static Map<EntityPlayerMP, Integer> mods = Maps.newHashMap();
+    public static Map<EntityPlayerMP, String> modlist = Maps.newHashMap();
 
     /**
      *  Get Player ping

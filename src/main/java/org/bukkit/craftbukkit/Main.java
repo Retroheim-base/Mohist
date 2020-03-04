@@ -10,9 +10,7 @@ import java.util.logging.Logger;
 import jline.UnsupportedTerminal;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.apache.logging.log4j.LogManager;
 import org.fusesource.jansi.AnsiConsole;
-import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
 
 public class Main {
@@ -21,7 +19,6 @@ public class Main {
 
     public static OptionSet main(String[] args) {
         // Todo: Installation script
-        Mohist.LOGGER = LogManager.getLogger("Mohist");
         OptionParser parser = new OptionParser() {
             {
                 acceptsAll(asList("?", "help"), "Show the help");

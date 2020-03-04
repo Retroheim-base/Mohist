@@ -23,9 +23,9 @@ import org.bukkit.craftbukkit.v1_12_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_12_R1.potion.CraftPotionEffectType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
-import red.mohist.Mohist;
 import red.mohist.api.ItemAPI;
 import red.mohist.api.ServerAPI;
+import red.mohist.console.log4j.MohistLog;
 import red.mohist.util.i18n.Message;
 
 public class ForgeInjectBukkit {
@@ -48,7 +48,7 @@ public class ForgeInjectBukkit {
                 Material material = Material.addMaterial(Item.getIdFromItem(entry.getValue()), entry.getValue().getItemStackLimit(), materialName);
                 if (material != null) {
                     ServerAPI.injectmaterials.put(material.name(), material.getId());
-                    Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
+                    MohistLog.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
                 }
             }
         }
@@ -62,7 +62,7 @@ public class ForgeInjectBukkit {
                 Material material = Material.addMaterial(Block.getIdFromBlock(entry.getValue()), materialName);
                 if (material != null) {
                     ServerAPI.injectblock.put(material.name(), material.getId());
-                    Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
+                   MohistLog.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
                 }
             }
         }

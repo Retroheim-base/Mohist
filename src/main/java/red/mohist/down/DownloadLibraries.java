@@ -32,7 +32,9 @@ public class DownloadLibraries {
             url = "https://www.mgazul.cn/"; //Github Mirror
         }
         InputStream listStream = DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red");
-        if (listStream == null) return;
+        if (listStream == null) {
+            return;
+        }
         Map<File, String> lib = new HashMap<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(listStream));

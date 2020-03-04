@@ -39,7 +39,7 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.spigotmc.CustomTimingsHandler;
 import org.yaml.snakeyaml.error.YAMLException;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 import red.mohist.util.i18n.Message;
 
 /**
@@ -83,7 +83,7 @@ public class JavaPluginLoader implements PluginLoader {
         if (dataFolder.equals(oldDataFolder)) {
             // They are equal -- nothing needs to be done!
         } else if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
-            Mohist.LOGGER.info(String.format(
+            MohistLog.LOGGER.info(String.format(
                     "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
                     description.getName(),
                     file,
@@ -94,7 +94,7 @@ public class JavaPluginLoader implements PluginLoader {
             if (!oldDataFolder.renameTo(dataFolder)) {
                 throw new InvalidPluginException("Unable to rename old data folder: '" + oldDataFolder + "' to: '" + dataFolder + "'");
             }
-            Mohist.LOGGER.info(String.format(
+            MohistLog.LOGGER.info(String.format(
                     "While loading %s (%s) renamed data folder: '%s' to '%s'",
                     description.getName(),
                     file,
@@ -251,7 +251,7 @@ public class JavaPluginLoader implements PluginLoader {
             methods.addAll(Arrays.asList(publicMethods));
             methods.addAll(Arrays.asList(privateMethods));
         } catch (NoClassDefFoundError e) {
-            Mohist.LOGGER.error("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
+            MohistLog.LOGGER.error("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
             return ret;
         }
 
@@ -267,7 +267,7 @@ public class JavaPluginLoader implements PluginLoader {
             }
             Class<?> checkClass;
             if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
-                Mohist.LOGGER.error(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+                MohistLog.LOGGER.error(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
                 continue;
             }
             Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
@@ -282,7 +282,7 @@ public class JavaPluginLoader implements PluginLoader {
                     if (!warningState.printFor(warning)) {
                         break;
                     }
-                    Mohist.LOGGER.warn(String.format(
+                    MohistLog.LOGGER.warn(String.format(
                             "\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated." +
                                     " \"%s\"; please notify the authors %s.",
                             plugin.getDescription().getFullName(),
@@ -313,7 +313,7 @@ public class JavaPluginLoader implements PluginLoader {
 
         Object[] pn = {plugin.getDescription().getFullName()};
         if (!plugin.isEnabled()) {
-            Mohist.LOGGER.info(Message.getFormatString("bukkit.plugin.enabling", pn));
+            MohistLog.LOGGER.info(Message.getFormatString("bukkit.plugin.enabling", pn));
 
             JavaPlugin jPlugin = (JavaPlugin) plugin;
 
@@ -321,12 +321,12 @@ public class JavaPluginLoader implements PluginLoader {
 
             if (!loaders.contains(pluginLoader)) {
                 loaders.add(pluginLoader);
-                Mohist.LOGGER.error(Message.getFormatString("bukkit.plugin.enablingunreg", pn));
+                MohistLog.LOGGER.error(Message.getFormatString("bukkit.plugin.enablingunreg", pn));
             }
             try {
                 jPlugin.setEnabled(true);
             } catch (Throwable ex) {
-                Mohist.LOGGER.error(Message.getFormatString("bukkit.plugin.enablingerror", pn), ex);
+                MohistLog.LOGGER.error(Message.getFormatString("bukkit.plugin.enablingerror", pn), ex);
             }
 
             // Perhaps abort here, rather than continue going, but as it stands,
@@ -339,7 +339,7 @@ public class JavaPluginLoader implements PluginLoader {
         Validate.isTrue(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (plugin.isEnabled()) {
-            Mohist.LOGGER.info(Message.getFormatString("bukkit.plugin.disabling", new Object[]{plugin.getDescription().getFullName()}));
+            MohistLog.LOGGER.info(Message.getFormatString("bukkit.plugin.disabling", new Object[]{plugin.getDescription().getFullName()}));
 
             server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
@@ -349,7 +349,7 @@ public class JavaPluginLoader implements PluginLoader {
             try {
                 jPlugin.setEnabled(false);
             } catch (Throwable ex) {
-                Mohist.LOGGER.error(Message.getFormatString("bukkit.plugin.disablingerror", new Object[]{plugin.getDescription().getFullName()}), ex);
+                MohistLog.LOGGER.error(Message.getFormatString("bukkit.plugin.disablingerror", new Object[]{plugin.getDescription().getFullName()}), ex);
             }
 
             if (cloader instanceof PluginClassLoader) {
@@ -365,7 +365,7 @@ public class JavaPluginLoader implements PluginLoader {
                 try {
                     loader.close();
                 } catch (IOException e) {
-                    Mohist.LOGGER.info("Error closing the Plugin Class Loader for " + plugin.getDescription().getFullName());
+                    MohistLog.LOGGER.info("Error closing the Plugin Class Loader for " + plugin.getDescription().getFullName());
                     e.printStackTrace();
                 }
                 // Paper end

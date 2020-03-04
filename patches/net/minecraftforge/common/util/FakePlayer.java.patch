@@ -8,7 +8,7 @@
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
  
 +import java.net.InetAddress;
 +import java.util.ArrayList;
@@ -40,7 +40,7 @@
 +                Bukkit.getPluginManager().callEvent(prelogin1);
 +                PlayerLoginEvent login = new PlayerLoginEvent(getBukkitEntity(), "localhost", InetAddress.getLoopbackAddress());
 +                Bukkit.getPluginManager().callEvent(login);
-+                Mohist.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
++                MohistLog.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
 +            });
 +        }).start();
 +    }

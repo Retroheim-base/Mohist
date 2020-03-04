@@ -73,7 +73,7 @@
 +import org.bukkit.event.block.BlockPhysicsEvent;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.generator.ChunkGenerator;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.common.RealTimeTicking;
 +import red.mohist.configuration.MohistConfig;
 +import red.mohist.util.ThermiteRandom;

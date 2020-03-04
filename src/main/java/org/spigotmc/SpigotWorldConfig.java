@@ -3,7 +3,7 @@ package org.spigotmc;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 import red.mohist.util.i18n.Message;
 
 public class SpigotWorldConfig {
@@ -76,7 +76,7 @@ public class SpigotWorldConfig {
         this.verbose = getBoolean("verbose", true);
 
         Object[] p = {worldName};
-        Mohist.LOGGER.info(Message.getFormatString("world.settings", p));
+        MohistLog.LOGGER.info(Message.getFormatString("world.settings", p));
         SpigotConfig.readConfig(SpigotWorldConfig.class, this);
     }
 

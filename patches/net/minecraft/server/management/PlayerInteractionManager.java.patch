@@ -35,7 +35,7 @@
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
 +import org.bukkit.event.player.PlayerInteractEvent;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
 +import red.mohist.common.RealTimeTicking;
  
  public class PlayerInteractionManager
@@ -202,7 +202,7 @@
 +                        return false;
 +                    }
 +                } catch (Exception e) {
-+                    Mohist.LOGGER.debug(e.getMessage());
++                   MohistLog.LOGGER.debug(e.getMessage());
 +                    return false;
 +                }
  

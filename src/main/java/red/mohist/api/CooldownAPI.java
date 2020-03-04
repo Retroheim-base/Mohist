@@ -1,11 +1,11 @@
 package red.mohist.api;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class CooldownAPI {
 
-    private static Map<String, CooldownAPI> cooldowns = new HashMap<>();
+    private static Map<String, CooldownAPI> cooldowns = Maps.newHashMap();
     private long start;
     private int timeInSeconds;
     private String id;

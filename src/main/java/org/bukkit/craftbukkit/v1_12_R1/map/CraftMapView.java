@@ -12,7 +12,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import red.mohist.Mohist;
+import red.mohist.console.log4j.MohistLog;
 
 public final class CraftMapView implements MapView {
 
@@ -146,7 +146,7 @@ public final class CraftMapView implements MapView {
             try {
                 renderer.render(this, canvas, player);
             } catch (Throwable ex) {
-                Mohist.LOGGER.error("Could not render map using renderer " + renderer.getClass().getName(), ex);
+                MohistLog.LOGGER.error("Could not render map using renderer " + renderer.getClass().getName(), ex);
             }
 
             byte[] buf = canvas.getBuffer();

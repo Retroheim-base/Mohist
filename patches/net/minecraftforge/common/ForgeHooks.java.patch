@@ -115,7 +115,7 @@
 +import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.world.StructureGrowEvent;
-+import red.mohist.Mohist;
++import red.mohist.console.log4j.MohistLog;
  
  public class ForgeHooks
  {
@@ -590,12 +590,12 @@
 +                        }
 +                        catch (JsonParseException jsonparseexception)
 +                        {
-+                            Mohist.LOGGER.debug("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
++                           MohistLog.LOGGER.debug("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
 +                            return false;
 +                        }
 +                        catch (IOException ioexception)
 +                        {
-+                            Mohist.LOGGER.debug("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
++                           MohistLog.LOGGER.debug("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
 +                            return false;
 +                        }
 +                        finally
