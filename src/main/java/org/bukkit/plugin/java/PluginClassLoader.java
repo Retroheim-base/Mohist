@@ -8,20 +8,18 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.server.MinecraftServer;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.common.remap.remappers.RemapUtils;
-import red.mohist.common.remap.Transformer;
-import red.mohist.common.remap.remappers.MohistJarRemapper;
+import red.mohist.Mohist;
+import red.mohist.common.remap.ClassLoaderContext;
+import red.mohist.common.remap.RemapUtils;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -29,7 +27,7 @@ import red.mohist.common.remap.remappers.MohistJarRemapper;
 public final class PluginClassLoader extends URLClassLoader {
     final JavaPlugin plugin;
     private final JavaPluginLoader loader;
-    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<>();
+    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     private final PluginDescriptionFile description;
     private final File dataFolder;
     private final File file;
@@ -38,8 +36,6 @@ public final class PluginClassLoader extends URLClassLoader {
     private final URL url;
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
-
-    private MohistJarRemapper remapper;
 
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
@@ -51,7 +47,6 @@ public final class PluginClassLoader extends URLClassLoader {
         this.jar = new JarFile(file);
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
-        this.remapper = RemapUtils.getMohistJarRemapper(this, true);
 
         try {
             Class<?> jarClass;
@@ -77,41 +72,46 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
-    public Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);
     }
 
     Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
+        ClassLoaderContext.put(this);
         Class<?> result;
-        if (name.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1")) {
-            String remappedClass = RemapUtils.jarMapping.classes.get(name.replaceAll("\\.", "\\/"));
-            return ((LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader()).findClass(remappedClass);
-        }
-
-        if (name.startsWith("org.bukkit.")) {
-            throw new ClassNotFoundException(name);
-        }
-        result = classes.get(name);
-        synchronized (name.intern()) {
-            if (result == null) {
-                if (checkGlobal) {
-                    result = loader.getClassByName(name);
-                }
-
-                if (result == null) {
-                    result = remappedFindClass(name);
-
-                    if (result != null) {
-                        loader.setClass(name, result);
-                    }
-                }
-
-                if (result == null) {
-                    throw new ClassNotFoundException(name);
-                }
-
-                classes.put(name, result);
+        try {
+            if (name.startsWith("net.minecraft.server.v1_12_R1")) {
+                String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
+                return Class.forName(remappedClass);
             }
+
+            if (name.startsWith("org.bukkit.")) {
+                throw new ClassNotFoundException(name);
+            }
+            result = classes.get(name);
+            synchronized (name.intern()) {
+                if (result == null) {
+                    if (checkGlobal) {
+                        result = loader.getClassByName(name);
+                    }
+
+                    if (result == null) {
+                        result = remappedFindClass(name);
+
+                        if (result != null) {
+                            loader.setClass(name, result);
+                        }
+                    }
+
+                    if (result == null) {
+                        throw new ClassNotFoundException(name);
+                    }
+
+                    classes.put(name, result);
+                }
+            }
+        } finally {
+            ClassLoaderContext.pop();
         }
         return result;
     }
@@ -152,10 +152,8 @@ public final class PluginClassLoader extends URLClassLoader {
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
-                    //remap
-                    byte[] bytecode = null;
-                    bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    bytecode = Transformer.process(bytecode);
+                    byte[] bytecode = IOUtils.toByteArray(stream);
+                    bytecode = RemapUtils.remapFindClass(name, bytecode);
                     // Define (create) the class using the modified byte code
                     // The top-child class loader is used for this to prevent access violations
                     // Set the codesource to the jar, not within the jar, for compatibility with
@@ -177,5 +175,9 @@ public final class PluginClassLoader extends URLClassLoader {
         }
 
         return result;
+    }
+
+    public PluginDescriptionFile getDescription() {
+        return description;
     }
 }

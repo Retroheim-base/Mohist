@@ -19,7 +19,7 @@ public class FindClassInMod {
         m_classname = classname;
     }
 
-    class JarZipFileFilter implements FileFilter {
+    static class JarZipFileFilter implements FileFilter {
         @Override
         public boolean accept(File file) {
             if (file.isDirectory()) {
@@ -27,11 +27,7 @@ public class FindClassInMod {
             }
 
             String name = file.getName().toLowerCase();
-            if (name.endsWith(".jar") || name.endsWith(".zip")) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.endsWith(".jar") || name.endsWith(".zip");
         }
     }
 

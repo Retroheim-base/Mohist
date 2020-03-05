@@ -62,10 +62,7 @@ public class MohistConfigUtil {
 
     public static boolean getBoolean(File f, String key) {
         String s = getString(f, key, "true");
-        if (s.equals("false")) {
-            return false;
-        }
-        return true;
+        return !s.equals("false");
     }
 
     public static int getInt(File f, String key, String defaultreturn) {

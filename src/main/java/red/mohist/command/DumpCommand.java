@@ -185,7 +185,7 @@ public class DumpCommand extends Command {
         StringBuilder sb = new StringBuilder();
         for (PatternType patternType : PatternType.values()) {
             String key = patternType.getIdentifier();
-            sb.append(key + "_" + PatternType.getByIdentifier(key)).append("\n");
+            sb.append(key).append("_").append(PatternType.getByIdentifier(key)).append("\n");
         }
         try {
             File file = new File("dump", "pattern.red");

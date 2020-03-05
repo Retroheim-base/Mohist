@@ -171,7 +171,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 import red.mohist.Mohist;
-import red.mohist.common.remap.remappers.RemapUtils;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.console.log4j.MohistLog;
 import red.mohist.pluginmanager.PluginManagers;
@@ -386,7 +385,6 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        RemapUtils.startRemapping();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");

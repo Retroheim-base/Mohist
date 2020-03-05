@@ -10,7 +10,7 @@ import red.mohist.util.i18n.Message;
 
 public class MohistThreadCost {
     static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-    {
+    static {
         threadMXBean.setThreadCpuTimeEnabled(true);
     }
 

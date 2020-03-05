@@ -78,5 +78,6 @@ public class DownloadLibraries {
                 JarLoader.loadjar(jarLoader, filepath);
             }
         }
+        listStream.close();
     }
 }

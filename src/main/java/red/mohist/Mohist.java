@@ -6,7 +6,6 @@ import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
 import red.mohist.forge.FindClassInMod;
-import red.mohist.util.JarLoader;
 import red.mohist.util.ServerEula;
 import red.mohist.util.i18n.Message;
 
