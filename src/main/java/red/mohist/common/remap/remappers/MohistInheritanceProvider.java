@@ -20,7 +20,7 @@ public class MohistInheritanceProvider implements InheritanceProvider {
         if (className.startsWith("net/minecraft/")) {
             return fineNMSParents(className, remap);
         } else {
-            return findNormalParents(className, remap);
+            return null /*findNormalParents(className, remap)*/;
         }
     }
 
