@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -50,8 +49,6 @@ public class RestartCommand extends Command
             {
                 System.out.println( "Attempting to restart with " + SpigotConfig.restartScript );
 
-                // Disable Watchdog
-                WatchdogThread.doStop();
                 // Kick all players
                 for ( EntityPlayerMP p : (List< EntityPlayerMP>) MinecraftServer.getServerInst().getPlayerList().playerEntityList )
                 {
@@ -123,7 +120,7 @@ public class RestartCommand extends Command
                 {
                 }
             }
-            FMLCommonHandler.instance().exitJava(0, false);
+            System.exit(0);
         } catch ( Exception ex )
         {
             ex.printStackTrace();
