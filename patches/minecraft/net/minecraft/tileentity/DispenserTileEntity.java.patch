@@ -1,0 +1,51 @@
+--- a/net/minecraft/tileentity/DispenserTileEntity.java
++++ b/net/minecraft/tileentity/DispenserTileEntity.java
+@@ -11,11 +11,48 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++// CraftBukkit start
++import java.util.List;
+ 
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class DispenserTileEntity extends LockableLootTileEntity {
+    private static final Random field_174913_f = new Random();
+    private NonNullList<ItemStack> field_146022_i = NonNullList.func_191197_a(9, ItemStack.field_190927_a);
+ 
++   //CraftBukkit start
++   public List<HumanEntity> transaction;
++   private int maxStack;
++
++   public List<ItemStack> getContents() {
++      return this.field_146022_i;
++   }
++
++   public void onOpen(final CraftHumanEntity who) {
++      this.transaction.add(who);
++   }
++
++   public void onClose(final CraftHumanEntity who) {
++      this.transaction.remove(who);
++   }
++
++   public List<HumanEntity> getViewers() {
++      return this.transaction;
++   }
++
++   @Override
++   public int func_70297_j_() {
++      return this.maxStack;
++   }
++
++   @Override
++   public void setMaxStackSize(final int size) {
++      this.maxStack = size;
++   }
++   // CraftBukkit end
++
+    protected DispenserTileEntity(TileEntityType<?> p_i48286_1_) {
+       super(p_i48286_1_);
+    }

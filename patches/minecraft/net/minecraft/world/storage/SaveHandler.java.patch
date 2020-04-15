@@ -1,0 +1,185 @@
+--- a/net/minecraft/world/storage/SaveHandler.java
++++ b/net/minecraft/world/storage/SaveHandler.java
+@@ -7,8 +7,10 @@
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTUtil;
+@@ -18,6 +20,7 @@
+ import net.minecraft.world.gen.feature.template.TemplateManager;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ 
+ public class SaveHandler implements IPlayerFileData {
+    private static final Logger field_215773_b = LogManager.getLogger();
+@@ -27,6 +30,7 @@
+    private final String field_215777_f;
+    private final TemplateManager field_215778_g;
+    protected final DataFixer field_215772_a;
++   private UUID uuid = null; // CraftBukkit
+ 
+    public SaveHandler(File p_i51278_1_, String p_i51278_2_, @Nullable MinecraftServer p_i51278_3_, DataFixer p_i51278_4_) {
+       this.field_215772_a = p_i51278_4_;
+@@ -50,6 +54,8 @@
+       CompoundNBT compoundnbt1 = new CompoundNBT();
+       compoundnbt1.func_218657_a("Data", compoundnbt);
+ 
++      net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataSave(this, p_75755_1_, compoundnbt1);
++
+       try {
+          File file1 = new File(this.field_215774_c, "level.dat_new");
+          File file2 = new File(this.field_215774_c, "level.dat_old");
+@@ -117,14 +123,14 @@
+    public WorldInfo func_75757_d() {
+       File file1 = new File(this.field_215774_c, "level.dat");
+       if (file1.exists()) {
+-         WorldInfo worldinfo = SaveFormat.func_215780_a(file1, this.field_215772_a);
++         WorldInfo worldinfo = SaveFormat.getWorldData(file1, this.field_215772_a, this);
+          if (worldinfo != null) {
+             return worldinfo;
+          }
+       }
+ 
+       file1 = new File(this.field_215774_c, "level.dat_old");
+-      return file1.exists() ? SaveFormat.func_215780_a(file1, this.field_215772_a) : null;
++      return file1.exists() ? SaveFormat.getWorldData(file1, this.field_215772_a, this) : null;
+    }
+ 
+    public void func_75761_a(WorldInfo p_75761_1_) {
+@@ -142,6 +148,7 @@
+          }
+ 
+          file1.renameTo(file2);
++         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_75753_1_, field_215775_d, p_75753_1_.func_110124_au().toString());
+       } catch (Exception var5) {
+          field_215773_b.warn("Failed to save player data for {}", (Object)p_75753_1_.func_200200_C_().getString());
+       }
+@@ -162,13 +169,38 @@
+       }
+ 
+       if (compoundnbt != null) {
++         // CraftBukkit start
++         if (p_75752_1_ instanceof ServerPlayerEntity) {
++            CraftPlayer cplayer = (CraftPlayer)p_75752_1_.getBukkitEntity();
++            long modified = new File(this.field_215775_d, String.valueOf(p_75752_1_.func_110124_au().toString()) + ".dat").lastModified();
++            if (modified < cplayer.getFirstPlayed()) {
++               cplayer.setFirstPlayed(modified);
++            }
++         }
++         // CraftBukkit end
+          int i = compoundnbt.func_150297_b("DataVersion", 3) ? compoundnbt.func_74762_e("DataVersion") : -1;
+          p_75752_1_.func_70020_e(NBTUtil.func_210822_a(this.field_215772_a, DefaultTypeReferences.PLAYER, compoundnbt, i));
+       }
++      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, field_215775_d, p_75752_1_.func_110124_au().toString());
+ 
+       return compoundnbt;
+    }
+ 
++   // CraftBukkit start
++   public CompoundNBT getPlayerData(final String s) {
++      try {
++         File file1 = new File(this.field_215775_d, s + ".dat");
++         if (file1.exists()) {
++            return CompressedStreamTools.func_74796_a(new FileInputStream(file1));
++         }
++      }
++      catch (Exception exception) {
++         field_215773_b.warn("Failed to load player data for " + s);
++      }
++      return null;
++   }
++   // CraftBukkit end
++
+    public String[] func_215771_d() {
+       String[] astring = this.field_215775_d.list();
+       if (astring == null) {
+@@ -191,4 +223,82 @@
+    public DataFixer func_197718_i() {
+       return this.field_215772_a;
+    }
++
++   public CompoundNBT getPlayerNBT(net.minecraft.entity.player.ServerPlayerEntity player) {
++      try {
++         File file1 = new File(this.field_215775_d, player.func_189512_bd() + ".dat");
++         if (file1.exists() && file1.isFile()) {
++            CompoundNBT nbt = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
++            if (nbt != null) {
++               nbt = NBTUtil.func_210822_a(this.field_215772_a, DefaultTypeReferences.PLAYER, nbt, nbt.func_150297_b("DataVersion", 3) ? nbt.func_74762_e("DataVersion") : -1);
++            }
++            return nbt;
++         }
++      } catch (Exception exception) {
++         field_215773_b.warn("Failed to load player data for " + player.func_200200_C_());
++      }
++      return null;
++   }
++
++   public File getPlayerFolder() {
++      return field_215775_d;
++   }
++
++   // CraftBukkit start
++   public UUID getUUID() {
++      if (this.uuid != null) {
++         return this.uuid;
++      }
++      File file1 = new File(this.field_215774_c, "uid.dat");
++      if (file1.exists()) {
++         DataInputStream dis = null;
++         try {
++            dis = new DataInputStream(new FileInputStream(file1));
++            UUID uuid = new UUID(dis.readLong(), dis.readLong());
++            this.uuid = uuid;
++            return uuid;
++         }
++         catch (IOException ex) {
++            field_215773_b.warn("Failed to read " + file1 + ", generating new random UUID", ex);
++         }
++         finally {
++            if (dis != null) {
++               try {
++                  dis.close();
++               }
++               catch (IOException ex2) {}
++            }
++         }
++      }
++      this.uuid = UUID.randomUUID();
++      DataOutputStream dos = null;
++      try {
++         dos = new DataOutputStream(new FileOutputStream(file1));
++         dos.writeLong(this.uuid.getMostSignificantBits());
++         dos.writeLong(this.uuid.getLeastSignificantBits());
++      }
++      catch (IOException ex) {
++         field_215773_b.warn("Failed to write " + file1, ex);
++      }
++      finally {
++         if (dos != null) {
++            try {
++               dos.close();
++            }
++            catch (IOException ex3) {}
++         }
++      }
++      if (dos != null) {
++         try {
++            dos.close();
++         }
++         catch (IOException ex4) {}
++      }
++      return this.uuid;
++   }
++
++   public File getPlayerDir() {
++      return this.field_215775_d;
++   }
++   // CraftBukkit end
+ }

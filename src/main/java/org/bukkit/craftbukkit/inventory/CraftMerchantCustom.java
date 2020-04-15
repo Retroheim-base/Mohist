@@ -69,7 +69,7 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public void func_213703_a(@Nullable MerchantOffers p_213703_1_) {
+        public void setClientSideOffers(@Nullable MerchantOffers p_213703_1_) {
 
         }
 
@@ -98,12 +98,12 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public void func_213702_q(int p_213702_1_) {
+        public void setXP(int p_213702_1_) {
 
         }
 
         @Override
-        public SoundEvent func_213714_ea() {
+        public SoundEvent getYesSound() {
             return SoundEvents.ENTITY_VILLAGER_YES;
         }
 

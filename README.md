@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2019/08/30/btYR9WDxd4XvhH3.png">
+<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 ## Mohist-1.15.2(In development)
 
@@ -15,3 +15,21 @@
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
    <img src="https://bstats.org/signatures/bukkit/Mohist.svg">
+   
+Building
+------
+* Checkout project
+  * You can use IDE or clone from console:
+  `git clone -b 1.15.2 https://github.com/Mohist-Community/Mohist.git`
+* Setup
+  * Build with Linux:
+  `bash gradlew setup`
+  * Build with Windows:
+  `gradlew.bat setup `
+* Building
+  * Build with Linux:
+  `bash gradlew setup installerJar`
+  * Build with Windows:
+  `gradlew.bat setup installerJar `
+
+All builds will be in `.projects\mohist\build\libs\` 

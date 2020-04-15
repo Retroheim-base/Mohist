@@ -1,0 +1,17 @@
+--- a/net/minecraft/server/dedicated/ServerProperties.java
++++ b/net/minecraft/server/dedicated/ServerProperties.java
+@@ -3,12 +3,14 @@
+ import java.nio.file.Path;
+ import java.util.Properties;
+ import java.util.concurrent.TimeUnit;
++import joptsimple.OptionSet;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.WorldType;
+ 
+ public class ServerProperties extends PropertyManager<ServerProperties> {
++   public final boolean debug = this.func_218982_a("debug", false); // CraftBukkit
+    public final boolean field_219007_a = this.func_218982_a("online-mode", true);
+    public final boolean field_219008_b = this.func_218982_a("prevent-proxy-connections", false);
+    public final String field_219009_c = this.func_218973_a("server-ip", "");

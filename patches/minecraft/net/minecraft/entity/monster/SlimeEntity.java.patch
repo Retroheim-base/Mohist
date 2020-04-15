@@ -1,0 +1,69 @@
+--- a/net/minecraft/entity/monster/SlimeEntity.java
++++ b/net/minecraft/entity/monster/SlimeEntity.java
+@@ -75,7 +75,7 @@
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e);
+    }
+ 
+-   protected void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
++   public void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
+       this.field_70180_af.func_187227_b(field_184711_bt, p_70799_1_);
+       this.func_226264_Z_();
+       this.func_213323_x_();
+@@ -129,6 +129,7 @@
+       if (this.field_70122_E && !this.field_175452_bi) {
+          int i = this.func_70809_q();
+ 
++         if (spawnCustomParticles()) i = 0; // don't spawn particles if it's handled by the implementation itself
+          for(int j = 0; j < i * 8; ++j) {
+             float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
+@@ -180,9 +181,10 @@
+       return (EntityType<? extends SlimeEntity>) super.func_200600_R();
+    }
+ 
+-   public void func_70106_y() {
++   @Override
++   public void remove(boolean keepData) {
+       int i = this.func_70809_q();
+-      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
++      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F && !this.field_70128_L) {
+          int j = 2 + this.field_70146_Z.nextInt(3);
+ 
+          for(int k = 0; k < j; ++k) {
+@@ -204,7 +206,7 @@
+          }
+       }
+ 
+-      super.func_70106_y();
++      super.remove(keepData);
+    }
+ 
+    public void func_70108_f(Entity p_70108_1_) {
+@@ -257,12 +259,12 @@
+       return this.func_189101_db() ? SoundEvents.field_187900_fz : SoundEvents.field_187886_fs;
+    }
+ 
+-   protected ResourceLocation func_184647_J() {
++   public ResourceLocation func_184647_J() {
+       return this.func_70809_q() == 1 ? this.func_200600_R().func_220348_g() : LootTables.field_186419_a;
+    }
+ 
+    public static boolean func_223366_c(EntityType<SlimeEntity> p_223366_0_, IWorld p_223366_1_, SpawnReason p_223366_2_, BlockPos p_223366_3_, Random p_223366_4_) {
+-      if (p_223366_1_.func_72912_H().func_76067_t() == WorldType.field_77138_c && p_223366_4_.nextInt(4) != 1) {
++      if (p_223366_1_.func_72912_H().func_76067_t().handleSlimeSpawnReduction(p_223366_4_, p_223366_1_) && p_223366_4_.nextInt(4) != 1) {
+          return false;
+       } else {
+          if (p_223366_1_.func_175659_aa() != Difficulty.PEACEFUL) {
+@@ -320,6 +322,12 @@
+       return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
+    }
+ 
++   /**
++    * Called when the slime spawns particles on landing, see onUpdate.
++    * Return true to prevent the spawning of the default particles.
++    */
++   protected boolean spawnCustomParticles() { return false; }
++
+    static class AttackGoal extends Goal {
+       private final SlimeEntity field_179466_a;
+       private int field_179465_b;

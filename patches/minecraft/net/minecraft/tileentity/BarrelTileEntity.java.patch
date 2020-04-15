@@ -1,0 +1,55 @@
+--- a/net/minecraft/tileentity/BarrelTileEntity.java
++++ b/net/minecraft/tileentity/BarrelTileEntity.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
+ 
++import java.util.List;
+ import net.minecraft.block.BarrelBlock;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+@@ -17,8 +18,45 @@
+ import net.minecraft.util.math.Vec3i;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class BarrelTileEntity extends LockableLootTileEntity {
++   // CraftBukkit start
++   public List<HumanEntity> transaction;
++   private int maxStack;
++
++   @Override
++   public List<ItemStack> getContents() {
++      return this.field_213966_a;
++   }
++
++   @Override
++   public void onOpen(final CraftHumanEntity who) {
++      this.transaction.add(who);
++   }
++
++   @Override
++   public void onClose(final CraftHumanEntity who) {
++      this.transaction.remove(who);
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return this.transaction;
++   }
++
++   @Override
++   public int func_70297_j_() {
++      return this.maxStack;
++   }
++
++   @Override
++   public void setMaxStackSize(final int i) {
++      this.maxStack = i;
++   }
++   // CraftBukkit end
++
+    private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
+    private int field_213967_b;
+ 
