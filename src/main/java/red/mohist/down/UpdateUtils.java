@@ -42,7 +42,7 @@ public class UpdateUtils {
         } catch (Throwable e) {}
         try {
             if (jar_sha.equals(ci_sha)) {
-                System.out.println(Message.getFormatString("update.latest", new Object[]{"1.7", jar_sha, ci_sha}));
+                System.out.println(Message.getFormatString("update.latest", new Object[]{"1.8", jar_sha, ci_sha}));
             } else {
                 System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
                 if (isDownload()) {
