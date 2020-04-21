@@ -88,7 +88,7 @@ public final class CraftItemStack extends ItemStack {
         if (original.isEmpty()) {
             return new ItemStack(Material.AIR);
         }
-        ItemStack stack = asCraftMirror(copyNMSStack(original, original.getCount())));
+        ItemStack stack = asCraftMirror(copyNMSStack(original, original.getCount()));
         ItemCap.put(original, stack);
         return stack;
     }
