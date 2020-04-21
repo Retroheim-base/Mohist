@@ -9,14 +9,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import red.mohist.inventory.ItemCap;
 
 public class ItemAPI {
 
@@ -155,5 +158,26 @@ public class ItemAPI {
         }catch(Exception e){
             return new ItemStack(Material.AIR);
         }
+    }
+
+    public static String serializeNBT(NBTTagCompound nbtTagCompound) {
+        try {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            CompressedStreamTools.writeCompressed(nbtTagCompound, buf);
+            return Base64Coder.encodeLines(buf.toByteArray());
+        } catch (IOException ignored) {
+        }
+        return null;
+    }
+
+    public static NBTTagCompound deserializeNBT(String serializeNBT) {
+        if (serializeNBT != null) {
+            ByteArrayInputStream buf = new ByteArrayInputStream(Base64Coder.decodeLines(serializeNBT));
+            try {
+                return CompressedStreamTools.readCompressed(buf);
+            } catch (IOException ignored) {
+            }
+        }
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.Objects;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import red.mohist.inventory.ItemCap;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -32,6 +34,7 @@ public final class CraftItemStack extends ItemStack {
      */
     private CraftItemStack(net.minecraft.item.ItemStack item) {
         this.handle = item;
+        ItemCap.put(item, this);
     }
 
     private CraftItemStack(ItemStack item) {
@@ -65,7 +68,7 @@ public final class CraftItemStack extends ItemStack {
             return net.minecraft.item.ItemStack.EMPTY;
         }
 
-        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability());
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability(), original.hasItemCapNBT() ? original.getItemCapNBT().getCapNBT() : null);
         if (original.hasItemMeta()) {
             setItemMeta(stack, original.getItemMeta());
         }
@@ -85,7 +88,12 @@ public final class CraftItemStack extends ItemStack {
         if (original.isEmpty()) {
             return new ItemStack(Material.AIR);
         }
-        return asCraftMirror(copyNMSStack(original, original.getCount()));
+        ItemStack stack = new ItemStack(CraftMagicNumbers.getMaterial(original.getItem()), original.getCount(), (short) original.getMetadata());
+        if (hasItemMeta(original)) {
+            stack.setItemMeta(getItemMeta(original));
+        }
+        ItemCap.put(original, stack);
+        return stack;
     }
 
     public static CraftItemStack asCraftMirror(net.minecraft.item.ItemStack original) {
@@ -454,7 +462,7 @@ public final class CraftItemStack extends ItemStack {
         if (!(that.getTypeId() == getTypeId() && getDurability() == that.getDurability())) {
             return false;
         }
-        return hasItemMeta() ? that.hasItemMeta() && handle.getTagCompound().equals(that.handle.getTagCompound()) : !that.hasItemMeta();
+        return (hasItemMeta() ? that.hasItemMeta() && Objects.requireNonNull(handle.getTagCompound()).equals(Objects.requireNonNull(that.handle.getTagCompound())) : !that.hasItemMeta()) && handle.areCapsCompatible(that.handle);
     }
 
     @Override

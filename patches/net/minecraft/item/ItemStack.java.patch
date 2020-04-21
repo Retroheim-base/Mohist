@@ -37,7 +37,7 @@
      private boolean canPlaceOnCacheResult;
  
 +    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    public net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private NBTTagCompound capNBT;
 +
      public ItemStack(Block blockIn)
