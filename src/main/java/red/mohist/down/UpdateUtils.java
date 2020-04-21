@@ -37,7 +37,7 @@ public class UpdateUtils {
         }
         try {
             time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
-            ci_sha = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
+            ci_sha = "1.12.2-" + root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
             jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
         } catch (Throwable e) {}
         try {
