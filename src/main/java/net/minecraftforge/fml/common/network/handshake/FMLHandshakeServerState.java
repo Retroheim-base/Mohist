@@ -99,7 +99,6 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
     WAITINGCACK
     {
         @Override
-
         public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
         {
             cons.accept(COMPLETE);

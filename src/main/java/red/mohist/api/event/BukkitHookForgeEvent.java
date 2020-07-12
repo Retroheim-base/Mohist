@@ -34,7 +34,12 @@ public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
+        return handlers;
+    }
+
+    public HandlerList getHomo() {
         return handlers;
     }
 }

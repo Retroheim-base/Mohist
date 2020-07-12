@@ -58,7 +58,6 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         {
             cons.accept(HELLO);
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-            //TODO
             dispatcher.clientListenForServerHandshake();
         }
     },
