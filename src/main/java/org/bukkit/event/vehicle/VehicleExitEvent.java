@@ -9,8 +9,11 @@ import org.bukkit.event.HandlerList;
  * Raised when a living entity exits a vehicle.
  */
 public class VehicleExitEvent extends VehicleEvent implements Cancellable {
+
+    // EMC end
     private static final HandlerList handlers = new HandlerList();
     private final LivingEntity exited;
+    public DismountReason reason = DismountReason.UNKNOWN;
     private boolean cancelled;
 
     public VehicleExitEvent(final Vehicle vehicle, final LivingEntity exited) {
@@ -20,6 +23,10 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public DismountReason getReason() {
+        return reason;
     }
 
     /**
@@ -42,5 +49,10 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    // EMC start
+    public enum DismountReason {
+        PLAYER, WATER, DEAD, TRANSFER, UNKNOWN, DISCONNECT
     }
 }

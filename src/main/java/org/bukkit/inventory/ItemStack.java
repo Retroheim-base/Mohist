@@ -1,8 +1,6 @@
 package org.bukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,6 +9,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Represents a stack of items
@@ -48,7 +49,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     /**
      * An item stack with no extra data
      *
-     * @param type item material id
+     * @param type   item material id
      * @param amount stack size
      * @deprecated Magic value
      */
@@ -59,7 +60,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     /**
      * An item stack with no extra data
      *
-     * @param type item material
+     * @param type   item material
      * @param amount stack size
      */
     public ItemStack(final Material type, final int amount) {
@@ -69,7 +70,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     /**
      * An item stack with the specified damage / durability
      *
-     * @param type item material id
+     * @param type   item material id
      * @param amount stack size
      * @param damage durability / damage
      * @deprecated Magic value
@@ -83,7 +84,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     /**
      * An item stack with the specified damage / durability
      *
-     * @param type item material
+     * @param type   item material
      * @param amount stack size
      * @param damage durability / damage
      */
@@ -92,10 +93,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     }
 
     /**
-     * @param type the raw type id
+     * @param type   the raw type id
      * @param amount the amount in the stack
      * @param damage the damage value of the item
-     * @param data the data value or null
+     * @param data   the data value or null
      * @deprecated this method uses an ambiguous data byte object
      */
     public ItemStack(final int type, final int amount, final short damage, final Byte data) {
@@ -109,10 +110,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     }
 
     /**
-     * @param type the type
+     * @param type   the type
      * @param amount the amount in the stack
      * @param damage the damage value of the item
-     * @param data the data value or null
+     * @param data   the data value or null
      * @deprecated this method uses an ambiguous data byte object
      */
 
@@ -126,7 +127,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      *
      * @param stack the stack to copy
      * @throws IllegalArgumentException if the specified stack is null or
-     *     returns an item meta not created by the item factory
+     *                                  returns an item meta not created by the item factory
      */
     public ItemStack(final ItemStack stack) throws IllegalArgumentException {
         Validate.notNull(stack, "Cannot copy null stack");
@@ -363,22 +364,76 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         return getAmount() == stack.getAmount() && isSimilar(stack);
     }
 
+    public boolean isSimilar(ItemStack stack) {
+        return isSimilar(stack, false);
+    }
+
     /**
      * This method is the same as equals, but does not consider stack size
      * (amount).
      *
-     * @param stack the item stack to compare to
-     * @return true if the two stacks are equal, ignoring the amount
+     * @param stack   the item stack to compare to
+     * @param skipDur Ignore differences in durability
+     * @return true if the two stacks are equal, ignoring the amount, and optionally durability
      */
     @Utility
-    public boolean isSimilar(ItemStack stack) {
+    public boolean isSimilar(ItemStack stack, boolean skipDur) {
+        return isSimilar(stack, skipDur, false);
+    }
+
+    /**
+     * This method is the same as equals, but does not consider stack size
+     * (amount).
+     *
+     * @param stack            the item stack to compare to
+     * @param skipDur          Ignore differences in durability
+     * @param skipCheckingName Ignore differences in display name
+     */
+    @Utility
+    public boolean isSimilar(ItemStack stack, boolean skipDur, boolean skipCheckingName) {
         if (stack == null) {
             return false;
         }
         if (stack == this) {
             return true;
         }
-        return getTypeId() == stack.getTypeId() && getDurability() == stack.getDurability() && hasItemMeta() == stack.hasItemMeta() && (hasItemMeta() ? Bukkit.getItemFactory().equals(getItemMeta(), stack.getItemMeta()) : true);
+        if (getTypeId() != stack.getTypeId() || (!skipDur && getDurability() != stack.getDurability())) {
+            return false;
+        }
+        final boolean hasMeta1 = hasItemMeta();
+        final boolean hasMeta2 = stack.hasItemMeta();
+        if (!hasMeta1 && !hasMeta2) {
+            return true;
+        }
+
+        final ItemMeta meta1 = hasMeta1 ? getItemMeta() : null;
+        final ItemMeta meta2 = hasMeta2 ? stack.getItemMeta() : null;
+
+        final String prevName1 = meta1 != null ? meta1.getDisplayName() : null;
+        final String prevName2 = meta2 != null ? meta2.getDisplayName() : null;
+        if (skipCheckingName) {
+            if (meta1 != null) {
+                meta1.setDisplayName(null);
+                if (meta2 != null) {
+                    meta2.setDisplayName(null);
+                }
+            }
+
+            try {
+                return Bukkit.getItemFactory().equals(meta1, meta2);
+            } finally {
+                if (skipCheckingName) {
+                    if (meta1 != null) {
+                        meta1.setDisplayName(prevName1);
+                    }
+                    if (meta2 != null) {
+                        meta2.setDisplayName(prevName2);
+                    }
+                }
+            }
+            // Paper end
+        }
+        return hasMeta1;
     }
 
     @Override
@@ -420,7 +475,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * @return True if this has the given enchantment
      */
     public boolean containsEnchantment(Enchantment ench) {
-        return meta == null ? false : meta.hasEnchant(ench);
+        return meta != null && meta.hasEnchant(ench);
     }
 
     /**
@@ -439,7 +494,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * @return Map of enchantments.
      */
     public Map<Enchantment, Integer> getEnchantments() {
-        return meta == null ? ImmutableMap.<Enchantment, Integer>of() : meta.getEnchants();
+        return meta == null ? ImmutableMap.of() : meta.getEnchants();
     }
 
     /**
@@ -452,8 +507,8 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * @param enchantments Enchantments to add
      * @throws IllegalArgumentException if the specified enchantments is null
      * @throws IllegalArgumentException if any specific enchantment or level
-     *     is null. <b>Warning</b>: Some enchantments may be added before this
-     *     exception is thrown.
+     *                                  is null. <b>Warning</b>: Some enchantments may be added before this
+     *                                  exception is thrown.
      */
     @Utility
     public void addEnchantments(Map<Enchantment, Integer> enchantments) {
@@ -469,10 +524,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * If this item stack already contained the given enchantment (at any
      * level), it will be replaced.
      *
-     * @param ench Enchantment to add
+     * @param ench  Enchantment to add
      * @param level Level of the enchantment
      * @throws IllegalArgumentException if enchantment null, or enchantment is
-     *     not applicable
+     *                                  not applicable
      */
     @Utility
     public void addEnchantment(Enchantment ench, int level) {
@@ -511,7 +566,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * This method is unsafe and will ignore level restrictions or item type.
      * Use at your own discretion.
      *
-     * @param ench Enchantment to add
+     * @param ench  Enchantment to add
      * @param level Level of the enchantment
      */
     public void addUnsafeEnchantment(Enchantment ench, int level) {
@@ -579,9 +634,9 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      *
      * @param itemMeta new ItemMeta, or null to indicate meta data be cleared.
      * @return True if successfully applied ItemMeta, see {@link
-     *     ItemFactory#isApplicable(ItemMeta, ItemStack)}
+     * ItemFactory#isApplicable(ItemMeta, ItemStack)}
      * @throws IllegalArgumentException if the item meta was not created by
-     *     the {@link ItemFactory}
+     *                                  the {@link ItemFactory}
      */
     public boolean setItemMeta(ItemMeta itemMeta) {
         return setItemMeta0(itemMeta, getType0());

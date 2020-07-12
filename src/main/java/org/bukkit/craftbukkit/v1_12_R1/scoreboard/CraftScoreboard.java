@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.util.Collection;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -53,7 +52,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     }
 
     public ImmutableSet<Objective> getObjectives() {
-        return ImmutableSet.copyOf(Iterables.transform((Collection<ScoreObjective>) this.board.getScoreObjectives(), (Function<ScoreObjective, Objective>) input -> new CraftObjective(CraftScoreboard.this, input)));
+        return ImmutableSet.copyOf(Iterables.transform(this.board.getScoreObjectives(), (Function<ScoreObjective, Objective>) input -> new CraftObjective(CraftScoreboard.this, input)));
     }
 
     public Objective getObjective(DisplaySlot slot) throws IllegalArgumentException {
@@ -117,7 +116,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     }
 
     public ImmutableSet<Team> getTeams() {
-        return ImmutableSet.copyOf(Iterables.transform((Collection<ScorePlayerTeam>) this.board.getTeams(), (Function<ScorePlayerTeam, Team>) input -> new CraftTeam(CraftScoreboard.this, input)));
+        return ImmutableSet.copyOf(Iterables.transform(this.board.getTeams(), (Function<ScorePlayerTeam, Team>) input -> new CraftTeam(CraftScoreboard.this, input)));
     }
 
     public Team registerNewTeam(String name) throws IllegalArgumentException {

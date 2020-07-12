@@ -1,11 +1,11 @@
 package red.mohist.configuration;
 
 public class StringSetting extends Setting<String> {
+    private final ConfigBase config;
     private String value;
-    private ConfigBase config;
 
     public StringSetting(ConfigBase config, String path, String def,
-            String description) {
+                         String description) {
         super(path, def, description);
         this.value = def;
         this.config = config;

@@ -24,7 +24,7 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
      * Gets the reason for why the creature is being spawned.
      *
      * @return A SpawnReason value detailing the reason for the creature being
-     *     spawned
+     * spawned
      */
     public SpawnReason getSpawnReason() {
         return spawnReason;
@@ -142,6 +142,7 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
          * When a creature is spawned by plugins
          */
         CUSTOM,
+        FORCE, // EMC
         /**
          * When an entity is missing a SpawnReason
          */

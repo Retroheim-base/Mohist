@@ -1,5 +1,12 @@
 package org.bukkit.plugin.java;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.Validate;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
+import red.mohist.bukkit.nms.ClassLoaderContext;
+import red.mohist.bukkit.nms.utils.RemapUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,18 +20,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.Validate;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.bukkit.nms.ClassLoaderContext;
-import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public final class PluginClassLoader extends URLClassLoader {
-    public JavaPlugin getPlugin() { return plugin; } // Spigot
     final JavaPlugin plugin;
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
@@ -70,6 +70,10 @@ public final class PluginClassLoader extends URLClassLoader {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
     }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    } // Spigot
 
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {

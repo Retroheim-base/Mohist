@@ -1,9 +1,10 @@
 package org.bukkit.util.permissions;
 
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.Map;
 
 public final class DefaultPermissions {
     private static final String ROOT = "craftbukkit";
@@ -77,6 +78,8 @@ public final class DefaultPermissions {
 
         CommandPermissions.registerPermissions(parent);
         BroadcastPermissions.registerPermissions(parent);
+
+        PurpurPermissions.registerPermissions(); //Purpur
 
         parent.recalculatePermissibles();
     }

@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.v1_12_R1.advancement;
 
-import java.util.Collection;
-import java.util.Collections;
 import net.minecraft.advancements.Advancement;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class CraftAdvancement implements org.bukkit.advancement.Advancement {
 
@@ -27,4 +28,11 @@ public class CraftAdvancement implements org.bukkit.advancement.Advancement {
     public Collection<String> getCriteria() {
         return Collections.unmodifiableCollection(handle.getCriteria().keySet());
     }
+
+    // Purpur start
+    @Override
+    public org.bukkit.advancement.AdvancementDisplay getDisplay() {
+        return getHandle().getDisplay() == null ? null : getHandle().getDisplay().bukkit;
+    }
+    // Purpur end
 }

@@ -1,10 +1,11 @@
 package org.spigotmc;
 
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
+
+import java.util.List;
 
 public class SpigotWorldConfig {
 
@@ -64,6 +65,13 @@ public class SpigotWorldConfig {
     public int tileMaxTickTime = 1000;
     public int entityMaxTickTime = 1000;
     public double squidSpawnRangeMin;
+    public int cactusMaxHeight;
+    public int reedMaxHeight;
+    public int fishingMinTicks;
+    public int fishingMaxTicks;
+    public int softDespawnDistance;
+    public int hardDespawnDistance;
+    public boolean keepSpawnInMemory;
     private boolean verbose;
 
     public SpigotWorldConfig(String worldName) {
@@ -280,5 +288,36 @@ public class SpigotWorldConfig {
 
     private void squidSpawnRange() {
         squidSpawnRangeMin = getDouble("squid-spawn-range.min", 45.0D);
+    }
+
+    private void blockGrowthHeight() {
+        cactusMaxHeight = getInt("max-growth-height.cactus", 3);
+        reedMaxHeight = getInt("max-growth-height.reeds", 3);
+        log("Max height for cactus growth " + cactusMaxHeight + ". Max height for reed growth " + reedMaxHeight);
+    }
+
+    private void fishingTickRange() {
+        fishingMinTicks = getInt("fishing-time-range.MinimumTicks", 100);
+        fishingMaxTicks = getInt("fishing-time-range.MaximumTicks", 600);
+        log("Fishing time ranges are between " + fishingMinTicks + " and " + fishingMaxTicks + " ticks");
+    }
+
+    private void despawnDistances() {
+        softDespawnDistance = getInt("despawn-ranges.soft", 32); // 32^2 = 1024, Minecraft Default
+        hardDespawnDistance = getInt("despawn-ranges.hard", 128); // 128^2 = 16384, Minecraft Default
+
+        if (softDespawnDistance > hardDespawnDistance) {
+            softDespawnDistance = hardDespawnDistance;
+        }
+
+        log("Living Entity Despawn Ranges:  Soft: " + softDespawnDistance + " Hard: " + hardDespawnDistance);
+
+        softDespawnDistance = softDespawnDistance * softDespawnDistance;
+        hardDespawnDistance = hardDespawnDistance * hardDespawnDistance;
+    }
+
+    private void keepSpawnInMemory() {
+        keepSpawnInMemory = getBoolean("keep-spawn-loaded", true);
+        log("Keep spawn chunk loaded: " + keepSpawnInMemory);
     }
 }

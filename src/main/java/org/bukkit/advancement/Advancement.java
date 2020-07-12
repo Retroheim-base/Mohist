@@ -1,7 +1,9 @@
 package org.bukkit.advancement;
 
-import java.util.Collection;
 import org.bukkit.Keyed;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Represents an advancement that may be awarded to a player. This class is not
@@ -15,4 +17,13 @@ public interface Advancement extends Keyed {
      * @return a unmodifiable copy of all criteria
      */
     Collection<String> getCriteria();
+
+    /**
+     * Gets the display properties of this advancement
+     *
+     * @return The display properties
+     */
+    @Nullable
+    AdvancementDisplay getDisplay();
 }
+
