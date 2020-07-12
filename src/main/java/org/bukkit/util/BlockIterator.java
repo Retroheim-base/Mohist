@@ -1,12 +1,14 @@
 package org.bukkit.util;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import static org.bukkit.util.NumberConversions.floor;
 import static org.bukkit.util.NumberConversions.round;
 
@@ -18,19 +20,15 @@ public class BlockIterator implements Iterator<Block> {
     private static final int gridSize = 1 << 24;
     private final World world;
     private final int maxDistance;
+    private final Block[] blockQueue = new Block[3];
+    private final int maxDistanceInt;
+    private final int secondStep;
+    private final int thirdStep;
     private boolean end = false;
-
-    private Block[] blockQueue = new Block[3];
     private int currentBlock = 0;
     private int currentDistance = 0;
-    private int maxDistanceInt;
-
     private int secondError;
     private int thirdError;
-
-    private int secondStep;
-    private int thirdStep;
-
     private BlockFace mainFace;
     private BlockFace secondFace;
     private BlockFace thirdFace;
@@ -38,15 +36,14 @@ public class BlockIterator implements Iterator<Block> {
     /**
      * Constructs the BlockIterator
      *
-     * @param world The world to use for tracing
-     * @param start A Vector giving the initial location for the trace
-     * @param direction A Vector pointing in the direction for the trace
-     * @param yOffset The trace begins vertically offset from the start vector
-     *     by this value
+     * @param world       The world to use for tracing
+     * @param start       A Vector giving the initial location for the trace
+     * @param direction   A Vector pointing in the direction for the trace
+     * @param yOffset     The trace begins vertically offset from the start vector
+     *                    by this value
      * @param maxDistance This is the maximum distance in blocks for the
-     *     trace. Setting this value above 140 may lead to problems with
-     *     unloaded chunks. A value of 0 indicates no limit
-     *
+     *                    trace. Setting this value above 140 may lead to problems with
+     *                    unloaded chunks. A value of 0 indicates no limit
      */
     public BlockIterator(World world, Vector start, Vector direction, double yOffset, int maxDistance) {
         this.world = world;
@@ -175,12 +172,12 @@ public class BlockIterator implements Iterator<Block> {
     /**
      * Constructs the BlockIterator
      *
-     * @param loc The location for the start of the ray trace
-     * @param yOffset The trace begins vertically offset from the start vector
-     *     by this value
+     * @param loc         The location for the start of the ray trace
+     * @param yOffset     The trace begins vertically offset from the start vector
+     *                    by this value
      * @param maxDistance This is the maximum distance in blocks for the
-     *     trace. Setting this value above 140 may lead to problems with
-     *     unloaded chunks. A value of 0 indicates no limit
+     *                    trace. Setting this value above 140 may lead to problems with
+     *                    unloaded chunks. A value of 0 indicates no limit
      */
     public BlockIterator(Location loc, double yOffset, int maxDistance) {
         this(loc.getWorld(), loc.toVector(), loc.getDirection(), yOffset, maxDistance);
@@ -189,9 +186,9 @@ public class BlockIterator implements Iterator<Block> {
     /**
      * Constructs the BlockIterator.
      *
-     * @param loc The location for the start of the ray trace
+     * @param loc     The location for the start of the ray trace
      * @param yOffset The trace begins vertically offset from the start vector
-     *     by this value
+     *                by this value
      */
 
     public BlockIterator(Location loc, double yOffset) {
@@ -211,10 +208,10 @@ public class BlockIterator implements Iterator<Block> {
     /**
      * Constructs the BlockIterator.
      *
-     * @param entity Information from the entity is used to set up the trace
+     * @param entity      Information from the entity is used to set up the trace
      * @param maxDistance This is the maximum distance in blocks for the
-     *     trace. Setting this value above 140 may lead to problems with
-     *     unloaded chunks. A value of 0 indicates no limit
+     *                    trace. Setting this value above 140 may lead to problems with
+     *                    unloaded chunks. A value of 0 indicates no limit
      */
 
     public BlockIterator(LivingEntity entity, int maxDistance) {

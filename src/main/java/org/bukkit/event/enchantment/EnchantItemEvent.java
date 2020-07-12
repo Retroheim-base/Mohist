@@ -1,7 +1,5 @@
 package org.bukkit.event.enchantment;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -10,6 +8,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Called when an ItemStack is successfully enchanted (currently at
@@ -21,9 +22,9 @@ public class EnchantItemEvent extends InventoryEvent implements Cancellable {
     private final ItemStack item;
     private final Map<Enchantment, Integer> enchants;
     private final Player enchanter;
+    private final int button;
     private int level;
     private boolean cancelled;
-    private int button;
 
     public EnchantItemEvent(final Player enchanter, final InventoryView view, final Block table, final ItemStack item, final int level, final Map<Enchantment, Integer> enchants, final int i) {
         super(view);

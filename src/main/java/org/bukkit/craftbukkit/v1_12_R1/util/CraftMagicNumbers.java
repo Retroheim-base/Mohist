@@ -4,6 +4,24 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
+import net.minecraft.advancements.AdvancementManager;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
+import org.bukkit.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.craftbukkit.v1_12_R1.CraftStatistic;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
+import red.mohist.Mohist;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,29 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.advancements.AdvancementManager;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import org.bukkit.Achievement;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Statistic;
-import org.bukkit.UnsafeValues;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.craftbukkit.v1_12_R1.CraftStatistic;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.StringUtil;
-import red.mohist.Mohist;
 
 public final class CraftMagicNumbers implements UnsafeValues {
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
@@ -98,7 +93,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public Material getMaterialFromInternalName(String name) {
-        return getMaterial((Item) Item.REGISTRY.getObject(new ResourceLocation(name)));
+        return getMaterial(Item.REGISTRY.getObject(new ResourceLocation(name)));
     }
 
     @Override
@@ -115,7 +110,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTagCompound((NBTTagCompound) JsonToNBT.getTagFromJson(arguments));
+            nmsStack.setTagCompound(JsonToNBT.getTagFromJson(arguments));
         } catch (NBTException ex) {
             Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
