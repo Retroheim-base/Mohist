@@ -30,6 +30,7 @@ public class HandshakeInjector extends ChannelOutboundHandlerAdapter {
 
     public HandshakeInjector(NetworkDispatcher networkDispatcher) {
         this.dispatcher = networkDispatcher;
+
     }
 
     @Override
